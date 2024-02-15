@@ -6,6 +6,7 @@ from api.models.event import Event
 class EventResponse(BaseModel):
     id: int
     name: str
+    s3_folder_name: str
     summary_filename: Optional[str]
     all_papers_filename: Optional[str]
     anal_filename: Optional[str]
@@ -15,6 +16,7 @@ class EventResponse(BaseModel):
         return cls(
             id=int(event.id),
             name=str(event.name),
+            s3_folder_name=str(event.s3_folder_name),
             summary_filename=(
                 str(event.summary_filename) if event.summary_filename else None
             ),
