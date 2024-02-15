@@ -15,8 +15,6 @@ class FileHandlerS3Adapter(FileHandlerProvider):
                 Body=file_to_upload, Bucket=self._bucket_name, Key=key_obj
             )
         except ClientError as e:
-            error_message = (
+            raise RuntimeError(
                 f"An error occurred while uploading {key_obj} to S3: {str(e)}"
             )
-
-            raise RuntimeError(error_message)
