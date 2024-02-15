@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from api.adapters.repository.paper import PaperAdapter
-from api.models.dto.paper import Paper as PaperDTO
+from api.models.dto.paper import PaperDTO
 from api.models.responses.paper import PaperResponse
 from api.services.paper import PaperService
 

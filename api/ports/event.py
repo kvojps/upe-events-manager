@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from api.models.dto.event import Event as EventDTO
+from api.models.dto.event import EventDTO
 from api.models.event import Event
 
 

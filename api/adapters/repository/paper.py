@@ -1,5 +1,5 @@
 from api.config.postgres import SessionLocal
-from api.models.dto.paper import Paper as PaperDTO
+from api.models.dto.paper import PaperDTO
 from api.models.paper import Paper
 from api.ports.paper import PaperRepository
 

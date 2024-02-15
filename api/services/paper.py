@@ -1,5 +1,5 @@
 from api.ports.paper import PaperRepository
-from api.models.dto.paper import Paper as PaperDTO
+from api.models.dto.paper import PaperDTO
 from api.models.responses.paper import PaperResponse
 
 

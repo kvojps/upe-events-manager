@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from api.adapters.repository.event import EventAdapter
-from api.models.dto.event import Event as EventDTO
-from api.models.responses.event import Event as EventResponse
+from api.models.dto.event import EventDTO
+from api.models.responses.event import EventResponse
 from api.services.event import EventService
 
 router = APIRouter()

@@ -1,5 +1,5 @@
 from api.config.postgres import SessionLocal
-from api.models.dto.event import Event as EventDTO
+from api.models.dto.event import EventDTO
 from api.models.event import Event
 from api.ports.event import EventRepository
 

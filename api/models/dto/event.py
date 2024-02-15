@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class Event(BaseModel):
+class EventDTO(BaseModel):
     name: str
     anal_filename: str

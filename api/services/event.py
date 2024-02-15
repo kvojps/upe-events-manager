@@ -1,5 +1,5 @@
-from api.models.dto.event import Event as EventDTO
-from api.models.responses.event import Event as EventResponse
+from api.models.dto.event import EventDTO
+from api.models.responses.event import EventResponse
 from api.ports.event import EventRepository
 
 

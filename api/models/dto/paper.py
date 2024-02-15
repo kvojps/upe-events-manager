@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Paper(BaseModel):
+class PaperDTO(BaseModel):
     pdf_id: str
     pdf_filename: str
     email: str
