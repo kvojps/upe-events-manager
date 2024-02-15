@@ -8,6 +8,8 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    summary_filename = Column(String)
+    all_papers_filename = Column(String)
     anal_filename = Column(String)
 
     papers = relationship("Paper", back_populates="event")

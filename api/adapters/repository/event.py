@@ -11,7 +11,8 @@ class EventAdapter(EventRepository):
     def create_event(self, event: EventDTO) -> Event:
         event_data = Event(
             name=event.name,
-            anal_filename=event.anal_filename,
+            summary_filename=None,
+            all_papers_filename=None,
         )
 
         self._session.add(event_data)
