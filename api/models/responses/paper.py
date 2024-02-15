@@ -5,6 +5,7 @@ from api.models.paper import Paper
 class PaperResponse(BaseModel):
     id: int
     pdf_id: str
+    area: str
     pdf_filename: str
     title: str
     authors: str
@@ -16,6 +17,7 @@ class PaperResponse(BaseModel):
         return cls(
             id=int(paper.id),
             pdf_id=str(paper.pdf_id),
+            area=str(paper.area),
             pdf_filename=str(paper.pdf_id + ".pdf"),
             title=str(paper.title),
             authors=str(paper.authors),
