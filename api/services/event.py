@@ -10,14 +10,9 @@ class EventService:
     def create_event(self, event: EventDTO) -> EventResponse:
         event_data = self._event_repo.create_event(event)
 
-        return EventResponse(
-            name=str(event_data.name), anal_filename=str(event_data.anal_filename)
-        )
+        return EventResponse.from_event(event_data)
 
     def get_events(self) -> list[EventResponse]:
         events_data = self._event_repo.get_events()
 
-        return [
-            EventResponse(name=str(event.name), anal_filename=str(event.anal_filename))
-            for event in events_data
-        ]
+        return [EventResponse.from_event(event) for event in events_data]
