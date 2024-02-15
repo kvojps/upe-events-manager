@@ -3,6 +3,7 @@ from api.models.paper import Paper
 
 
 class PaperResponse(BaseModel):
+    id: int
     pdf_id: str
     pdf_filename: str
     email: str
@@ -14,6 +15,7 @@ class PaperResponse(BaseModel):
     @classmethod
     def from_paper(cls, paper: Paper) -> "PaperResponse":
         return cls(
+            id=int(paper.id),
             pdf_id=str(paper.pdf_id),
             pdf_filename=str(paper.pdf_filename),
             email=str(paper.email),
