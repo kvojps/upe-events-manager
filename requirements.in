@@ -1,5 +1,7 @@
 fastapi
 uvicorn
+sqlalchemy
+sqlmodel
 dynaconf
 boto3
 boto3-stubs
