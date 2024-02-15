@@ -7,6 +7,7 @@ from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
+from reportlab.lib.utils import simpleSplit
 
 
 class EventsPaginatedResponse(BaseModel):
@@ -33,29 +34,31 @@ class EventService:
         summary_pdf = canvas.Canvas(buffer, pagesize=letter)
         summary_pdf.setFont("Helvetica-Bold", 12)
 
-        y_position = 750  # Posição inicial Y
+        y_position = 750  
 
         for area in event_areas:
-            # Escreva o título da área
             summary_pdf.setFont("Helvetica-Bold", 16)
+            if y_position < 60:
+                summary_pdf.showPage()
+                y_position = 750  
             summary_pdf.drawString(100, y_position, f"Área: {area}")
-            y_position -= 20  # Atualize a posição Y
-
+            y_position -= 20  
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                # Escreva o título do paper
-                summary_pdf.setFont("Helvetica-Bold", 12)
-                summary_pdf.drawString(165, y_position, str(paper.title))
-                y_position -= 20  # Atualize a posição Y
-
-                # Escreva os autores
-                summary_pdf.setFont("Helvetica", 12)
-                summary_pdf.drawString(165, y_position, f"Autores: {', '.join(paper.authors)}")
-                y_position -= 20  # Atualize a posição Y
-
                 if y_position < 50:
                     summary_pdf.showPage()
-                    y_position = 750  # Reinicie a posição Y para a próxima página
+                    y_position = 750  
+                summary_pdf.setFont("Helvetica-Bold", 12)
+                title_lines = simpleSplit(str(paper.title), summary_pdf._fontname, summary_pdf._fontsize, 400)
+                for line in title_lines:
+                    summary_pdf.drawString(165, y_position, line)
+                    y_position -= 20  
+
+                authors_str = f"Autores: {paper.authors}"
+                authors_lines = simpleSplit(authors_str, summary_pdf._fontname, summary_pdf._fontsize, 400)
+                for line in authors_lines:
+                    summary_pdf.drawString(165, y_position, line)
+                    y_position -= 20  
 
         summary_pdf.save()
 
