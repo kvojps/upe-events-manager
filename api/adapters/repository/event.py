@@ -21,5 +21,13 @@ class EventAdapter(EventRepository):
 
         return event_data
 
-    def get_events(self) -> list[Event]:
-        return self._session.query(Event).all()
+    def get_events(self, page: int = 1, page_size: int = 10) -> list[Event]:
+        return (
+            self._session.query(Event)
+            .limit(page_size)
+            .offset((page - 1) * page_size)
+            .all()
+        )
+
+    def count_events(self) -> int:
+        return self._session.query(Event).count()
