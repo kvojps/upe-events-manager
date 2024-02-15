@@ -18,7 +18,7 @@ def create_paper(
 
 
 @router.post(
-    "/csv/events/{event_id}",
+    "/upload_csv/events/{event_id}",
     response_model=list[BatchPapersResponse],
     status_code=status.HTTP_207_MULTI_STATUS,
 )
