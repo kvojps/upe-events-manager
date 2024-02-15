@@ -2,5 +2,6 @@ fastapi
 uvicorn
 dynaconf
 boto3
+boto3-stubs
 psycopg2-binary
 python-multipart
