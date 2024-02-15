@@ -47,7 +47,7 @@ class EventService:
             for paper in papers:
                 summary_pdf.setFont("Helvetica-Bold", 12)
                 title_lines = simpleSplit(
-                    "* " + str(paper.title),
+                    "* " + str(paper.title).capitalize(),
                     summary_pdf._fontname,
                     summary_pdf._fontsize,
                     400,
