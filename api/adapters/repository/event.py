@@ -4,7 +4,7 @@ from api.models.event import Event
 from api.ports.event import EventRepository
 
 
-class PaperAdapter(EventRepository):
+class EventAdapter(EventRepository):
     def __init__(self):
         self._session = SessionLocal()
 
