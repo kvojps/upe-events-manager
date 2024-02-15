@@ -11,6 +11,13 @@ class BatchPapersResponse(BaseModel):
     message: str
 
 
+class PapersPaginatedResponse(BaseModel):
+    papers: list[PaperResponse]
+    total_papers: int
+    total_pages: int
+    current_page: int
+
+
 class PaperService:
     def __init__(self, paper_repo: PaperRepository):
         self._paper_repo = paper_repo
@@ -69,7 +76,15 @@ class PaperService:
 
         return batch_papers
 
-    def get_papers(self) -> list[PaperResponse]:
-        papers_data = self._paper_repo.get_papers()
+    def get_papers(self, page: int = 1, page_size: int = 10) -> PapersPaginatedResponse:
+        papers_data = self._paper_repo.get_papers(page, page_size)
+        papers_response = [
+            PaperResponse.from_paper(paper_data) for paper_data in papers_data
+        ]
 
-        return [PaperResponse.from_paper(paper_data) for paper_data in papers_data]
+        return PapersPaginatedResponse(
+            papers=papers_response,
+            total_papers=self._paper_repo.count_papers(),
+            total_pages=self._paper_repo.count_papers() // page_size,
+            current_page=page,
+        )
