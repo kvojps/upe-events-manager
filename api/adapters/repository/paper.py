@@ -11,6 +11,7 @@ class PaperAdapter(PaperRepository):
     def create_paper(self, paper: PaperDTO) -> Paper:
         paper_data = Paper(
             pdf_id=paper.pdf_id,
+            area=paper.area,
             title=paper.title,
             authors=paper.authors,
             isIgnored=paper.isIgnored,
