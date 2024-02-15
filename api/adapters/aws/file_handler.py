@@ -1,9 +1,7 @@
-import uuid
 from botocore.exceptions import ClientError
-from fastapi import HTTPException
 from api.config.dynaconf import settings
 from api.config.s3 import S3Config
-from api.ports.file_handler import FileHandlerProvider, UploadUrlResponse
+from api.ports.file_handler import FileHandlerProvider
 
 
 class FileHandlerS3Adapter(FileHandlerProvider):
@@ -11,19 +9,15 @@ class FileHandlerS3Adapter(FileHandlerProvider):
         self._session = S3Config()
         self._bucket_name = settings.AWS_S3_BUCKET_NAME
 
-    def get_presigned_url(self) -> UploadUrlResponse | None:
+    def put_object(self, file_to_upload: bytes, key_obj: str):
         try:
-            key_obj = f"{str(uuid.uuid4())}.docx"
-            url = self._session.s3_client.generate_presigned_url(
-                "put_object",
-                Params={"Bucket": self._bucket_name, "Key": key_obj},
-                ExpiresIn=3600,
+            response = self._session.s3_client.put_object(
+                Body=file_to_upload, Bucket=self._bucket_name, Key=key_obj
             )
-
-            return UploadUrlResponse(url=url, filename=key_obj)
-
+            return response
         except ClientError as e:
-            raise HTTPException(
-                status_code=e.response["ResponseMetadata"]["HTTPStatusCode"],
-                detail=e.response["message"],  # type: ignore
+            error_message = (
+                f"An error occurred while uploading {key_obj} to S3: {str(e)}"
             )
+
+            raise RuntimeError(error_message)
