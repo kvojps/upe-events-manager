@@ -8,6 +8,5 @@ class UploadUrlResponse(BaseModel):
 
 
 class FileHandlerProvider(ABC):
-
     @abstractmethod
     def get_presigned_url(self) -> UploadUrlResponse | None: ...
