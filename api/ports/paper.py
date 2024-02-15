@@ -9,3 +9,6 @@ class PaperRepository(ABC):
 
     @abstractmethod
     def get_papers(self) -> list[Paper]: ...
+
+    @abstractmethod
+    def count_papers_by_event_id(self, event_id: int) -> int: ...

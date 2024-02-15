@@ -29,6 +29,12 @@ class PaperService:
                 detail="Only CSV files are allowed",
             )
 
+        if self._paper_repo.count_papers_by_event_id(event_id) > 0:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Papers already created for this event",
+            )
+
         contents = await file.read()
         decoded_content = contents.decode("utf-8").splitlines()
         csv_reader = csv.DictReader(decoded_content, delimiter=";")

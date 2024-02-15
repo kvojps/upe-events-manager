@@ -25,3 +25,6 @@ class PaperAdapter(PaperRepository):
 
     def get_papers(self) -> list[Paper]:
         return self._session.query(Paper).all()
+
+    def count_papers_by_event_id(self, event_id: int) -> int:
+        return self._session.query(Paper).filter(Paper.event_id == event_id).count()
