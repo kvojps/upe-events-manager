@@ -45,9 +45,6 @@ class EventService:
             y_position -= 20
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                if y_position < 50:
-                    summary_pdf.showPage()
-                    y_position = 750
                 summary_pdf.setFont("Helvetica-Bold", 12)
                 title_lines = simpleSplit(
                     "* " + str(paper.title),
@@ -56,6 +53,10 @@ class EventService:
                     400,
                 )
                 for line in title_lines:
+                    if y_position < 50:
+                        summary_pdf.showPage()
+                        y_position = 750
+                        summary_pdf.setFont("Helvetica-Bold", 12)
                     summary_pdf.drawString(165, y_position, line)
                     y_position -= 20
 
@@ -67,6 +68,10 @@ class EventService:
                     400,
                 )
                 for line in authors_lines:
+                    if y_position < 50:
+                        summary_pdf.showPage()
+                        y_position = 750
+                        summary_pdf.setFont("Helvetica-Bold", 10)
                     summary_pdf.drawString(165, y_position, line)
                     y_position -= 20
 
