@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 from api.config.postgres import Base
 
 
@@ -11,3 +12,6 @@ class Paper(Base):
     email = Column(String, unique=True, index=True)
     title = Column(String)
     authors = Column(String)
+    event_id = Column(Integer, ForeignKey("events.id"))
+
+    event = relationship("Event", back_populates="papers")
