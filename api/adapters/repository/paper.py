@@ -33,8 +33,21 @@ class PaperAdapter(PaperRepository):
 
         return papers
 
+    def get_papers_by_area(self, area: str) -> list[Paper]:
+        return self._session.query(Paper).filter(Paper.area == area).all()
+
     def count_papers(self) -> int:
         return self._session.query(Paper).count()
 
     def count_papers_by_event_id(self, event_id: int) -> int:
         return self._session.query(Paper).filter(Paper.event_id == event_id).count()
+
+    def get_areas_by_event_id(self, event_id: int) -> list[str]:
+        areas = (
+            self._session.query(Paper.area)
+            .filter(Paper.event_id == event_id)
+            .distinct()
+            .all()
+        )
+
+        return [area[0] for area in areas]
