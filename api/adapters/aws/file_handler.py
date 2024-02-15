@@ -23,7 +23,7 @@ class FileHandlerS3Adapter(FileHandlerProvider):
             return UploadUrlResponse(url=url, filename=key_obj)
 
         except ClientError as e:
-            error_status_code = e.response["ResponseMetadata"]["HTTPStatusCode"]
-            error_message = e.response["message"]  # type: ignore
-
-            raise HTTPException(status_code=error_status_code, detail=error_message)
+            raise HTTPException(
+                status_code=e.response["ResponseMetadata"]["HTTPStatusCode"],
+                detail=e.response["message"],  # type: ignore
+            )
