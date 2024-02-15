@@ -8,3 +8,4 @@ boto3-stubs
 psycopg2-binary
 python-multipart
 reportlab
+reportlab-stubs
