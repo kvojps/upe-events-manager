@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, UploadFile, status
 from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.paper import PaperDTO
 from api.models.responses.paper import PaperResponse
-from api.services.paper import PaperService
+from api.services.paper import BatchPapersResponse, PaperService
 
 router = APIRouter()
 
@@ -15,6 +15,19 @@ def create_paper(
     paper_data: PaperDTO, paper_service: PaperService = Depends(lambda: service)
 ):
     return paper_service.create_paper(paper_data)
+
+
+@router.post(
+    "/csv/events/{event_id}",
+    response_model=list[BatchPapersResponse],
+    status_code=status.HTTP_207_MULTI_STATUS,
+)
+async def batch_create_papers(
+    event_id: int,
+    file: UploadFile = File(...),
+    paper_service: PaperService = Depends(lambda: service),
+):
+    return await paper_service.batch_create_papers(event_id, file)
 
 
 @router.get("", response_model=list[PaperResponse], status_code=status.HTTP_200_OK)
