@@ -6,7 +6,6 @@ class PaperResponse(BaseModel):
     id: int
     pdf_id: str
     pdf_filename: str
-    email: str
     title: str
     authors: str
     isIgnored: bool
@@ -18,7 +17,6 @@ class PaperResponse(BaseModel):
             id=int(paper.id),
             pdf_id=str(paper.pdf_id),
             pdf_filename=str(paper.pdf_filename),
-            email=str(paper.email),
             title=str(paper.title),
             authors=str(paper.authors),
             isIgnored=bool(paper.isIgnored),

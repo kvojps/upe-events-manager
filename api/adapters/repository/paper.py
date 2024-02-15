@@ -12,7 +12,6 @@ class PaperAdapter(PaperRepository):
         paper_data = Paper(
             pdf_id=paper.pdf_id,
             pdf_filename=paper.pdf_filename,
-            email=paper.email,
             title=paper.title,
             authors=paper.authors,
             isIgnored=paper.isIgnored,
