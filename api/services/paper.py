@@ -1,4 +1,5 @@
 import csv
+from math import ceil
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from api.models.dto.paper import PaperDTO
@@ -85,6 +86,6 @@ class PaperService:
         return PapersPaginatedResponse(
             papers=papers_response,
             total_papers=self._paper_repo.count_papers(),
-            total_pages=self._paper_repo.count_papers() // page_size,
+            total_pages=ceil(self._paper_repo.count_papers() / page_size),
             current_page=page,
         )
