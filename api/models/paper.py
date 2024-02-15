@@ -8,7 +8,6 @@ class Paper(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pdf_id = Column(String, unique=True, index=True)
-    pdf_filename = Column(String, unique=True, index=True)
     title = Column(String)
     authors = Column(String)
     isIgnored = Column(Boolean, default=False)

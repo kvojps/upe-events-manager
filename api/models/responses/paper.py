@@ -16,7 +16,7 @@ class PaperResponse(BaseModel):
         return cls(
             id=int(paper.id),
             pdf_id=str(paper.pdf_id),
-            pdf_filename=str(paper.pdf_filename),
+            pdf_filename=str(paper.pdf_id + ".pdf"),
             title=str(paper.title),
             authors=str(paper.authors),
             isIgnored=bool(paper.isIgnored),
