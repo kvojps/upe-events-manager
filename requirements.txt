@@ -18,6 +18,8 @@ botocore==1.34.42
     #   s3transfer
 botocore-stubs==1.34.42
     # via boto3-stubs
+chardet==5.2.0
+    # via reportlab
 click==8.1.7
     # via uvicorn
 dynaconf==3.2.4
@@ -36,6 +38,8 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
+pillow==10.2.0
+    # via reportlab
 psycopg2-binary==2.9.9
     # via -r requirements.in
 pydantic==2.6.1
@@ -47,6 +51,8 @@ pydantic-core==2.16.2
 python-dateutil==2.8.2
     # via botocore
 python-multipart==0.0.9
+    # via -r requirements.in
+reportlab==4.1.0
     # via -r requirements.in
 s3transfer==0.10.0
     # via boto3
