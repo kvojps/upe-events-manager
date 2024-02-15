@@ -18,5 +18,5 @@ def create_paper(
 
 
 @router.get("", response_model=list[PaperResponse], status_code=status.HTTP_200_OK)
-def get_paper(paper_service: PaperService = Depends(lambda: service)):
+def get_papers(paper_service: PaperService = Depends(lambda: service)):
     return paper_service.get_papers()
