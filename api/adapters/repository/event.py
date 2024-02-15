@@ -1,3 +1,4 @@
+import uuid
 from api.config.postgres import SessionLocal
 from api.models.dto.event import EventDTO
 from api.models.event import Event
@@ -11,6 +12,9 @@ class EventAdapter(EventRepository):
     def create_event(self, event: EventDTO) -> Event:
         event_data = Event(
             name=event.name,
+            s3_folder_name=event.name.lower().replace(" ", "_")
+            + "__"
+            + str(uuid.uuid4()),
             summary_filename=None,
             all_papers_filename=None,
         )
