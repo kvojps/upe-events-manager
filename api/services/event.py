@@ -36,3 +36,10 @@ class EventService:
             total_pages=ceil(self._event_repo.count_events() / page_size),
             current_page=page,
         )
+
+    def update_summary_filename(
+        self, event_id: int, summary_filename: str
+    ) -> EventResponse:
+        return EventResponse.from_event(
+            self._event_repo.update_summary_filename(event_id, summary_filename)
+        )
