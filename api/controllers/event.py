@@ -35,7 +35,7 @@ def get_events(
     return event_service.get_events(page, page_size)
 
 
-@router.put(
+@router.patch(
     "/{event_id}/summary",
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
