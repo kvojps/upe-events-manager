@@ -15,3 +15,8 @@ class EventRepository(ABC):
 
     @abstractmethod
     def count_events(self) -> int: ...
+
+    @abstractmethod
+    def update_summary_filename(
+        self, event_id: int, summary_filename: str
+    ) -> Event: ...

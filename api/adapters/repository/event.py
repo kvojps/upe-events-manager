@@ -33,8 +33,10 @@ class EventAdapter(EventRepository):
             .all()
         )
 
-    def get_event_by_id(self, event_id: int) -> Event:
-        return self._session.query(Event).filter(Event.id == event_id).first()
+    def update_summary_filename(self, event_id: int, summary_filename: str) -> Event:
+        event = self.get_event_by_id(event_id)
+        event.summary_filename = summary_filename  # type: ignore
+        self._session.commit()
+        self._session.refresh(event)
 
-    def count_events(self) -> int:
-        return self._session.query(Event).count()
+        return event
