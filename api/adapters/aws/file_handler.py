@@ -7,16 +7,17 @@ from api.ports.file_handler import FileHandlerProvider
 class FileHandlerS3Adapter(FileHandlerProvider):
     def __init__(self):
         self._session = S3Config()
-        self._bucket_name = settings.AWS_S3_BUCKET_NAME
+        self._bucket_name = settings.S3_BUCKET_NAME
 
-    def put_object(self, file_to_upload: bytes, folder: str, key_obj: str):
+    def put_object(self, file_to_upload: bytes, folder: str, key_obj: str) -> str:
         try:
-            return self._session.s3_client.put_object(
+            key = folder + "/" + key_obj
+            self._session.s3_client().put_object(
                 Body=file_to_upload,
                 Bucket=self._bucket_name,
-                Key=folder + "/" + key_obj,
+                Key=key,
             )
+
+            return key
         except ClientError as e:
-            raise RuntimeError(
-                f"An error occurred while uploading {key_obj} to S3: {str(e)}"
-            )
+            raise e
