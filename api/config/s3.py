@@ -6,9 +6,9 @@ from api.config.dynaconf import settings
 
 class S3Config:
     def __init__(self):
-        self._region = settings.AWS_REGION
-        self._aws_access_key_id = settings.AWS_ACCESS_KEY_ID
-        self._aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY
+        self._region = settings.REGION
+        self._aws_access_key_id = settings.ACCESS_KEY_ID
+        self._aws_secret_access_key = settings.SECRET_ACCESS_KEY
 
     def s3_client(self) -> BaseClient:
         try:
