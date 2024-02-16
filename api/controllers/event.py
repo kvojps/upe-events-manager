@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends, Query, status
-from fastapi.responses import FileResponse
+from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
-from api.services.event import EventService, EventsPaginatedResponse
+from api.services.event import EventService, EventsPaginatedResponse, SummaryResponse
 
 router = APIRouter()
 
 event_adapter = EventAdapter()
 paper_adapter = PaperAdapter()
-service = EventService(event_adapter, paper_adapter)
+file_handler_adapter = FileHandlerS3Adapter()
+service = EventService(event_adapter, paper_adapter, file_handler_adapter)
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
@@ -22,16 +23,13 @@ def create_event(
 
 @router.post(
     "/{event_id}/summary",
+    response_model=SummaryResponse,
     status_code=status.HTTP_201_CREATED,
 )
 def create_summary(
     event_id: int, event_service: EventService = Depends(lambda: service)
 ):
-    file_content = event_service.create_summary(event_id)
-    with open("summary.pdf", "wb") as file:
-        file.write(file_content)
-
-    return FileResponse("summary.pdf", filename="summary.pdf")
+    return event_service.create_summary(event_id)
 
 
 @router.get("", response_model=EventsPaginatedResponse, status_code=status.HTTP_200_OK)

@@ -1,5 +1,7 @@
 from io import BytesIO
 from math import ceil
+from botocore.exceptions import ClientError
+from fastapi import HTTPException, status
 from pydantic import BaseModel
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import simpleSplit
@@ -7,6 +9,7 @@ from reportlab.pdfgen import canvas
 from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
 from api.ports.event import EventRepository
+from api.ports.file_handler import FileHandlerProvider
 from api.ports.paper import PaperRepository
 
 
@@ -17,17 +20,27 @@ class EventsPaginatedResponse(BaseModel):
     current_page: int
 
 
+class SummaryResponse(BaseModel):
+    summary_url: str
+
+
 class EventService:
-    def __init__(self, event_repo: EventRepository, paper_repo: PaperRepository):
+    def __init__(
+        self,
+        event_repo: EventRepository,
+        paper_repo: PaperRepository,
+        file_handler_repo: FileHandlerProvider,
+    ):
         self._event_repo = event_repo
         self._paper_repo = paper_repo
+        self._file_handler_repo = file_handler_repo
 
     def create_event(self, event: EventDTO) -> EventResponse:
         event_data = self._event_repo.create_event(event)
 
         return EventResponse.from_event(event_data)
 
-    def create_summary(self, event_id: int) -> bytes:
+    def create_summary(self, event_id: int) -> SummaryResponse:
         event_areas = self._paper_repo.get_areas_by_event_id(event_id)
 
         buffer = BytesIO()
@@ -77,7 +90,22 @@ class EventService:
 
         summary_pdf.save()
 
-        return buffer.getvalue()
+        event = self._event_repo.get_event_by_id(event_id)
+        summary_key = ""
+        try:
+            summary_key = self._file_handler_repo.put_object(
+                buffer.getvalue(),
+                str(event.s3_folder_name),
+                f"{str(event.name).lower().replace(' ', '_')}_summary.pdf",
+            )
+        except ClientError as e:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)
+            )
+
+        return SummaryResponse(
+            summary_url=summary_key,
+        )
 
     def get_events(self, page: int = 1, page_size: int = 10) -> EventsPaginatedResponse:
         events_data = self._event_repo.get_events(page, page_size)
