@@ -33,5 +33,8 @@ class EventAdapter(EventRepository):
             .all()
         )
 
+    def get_event_by_id(self, event_id: int) -> Event:
+        return self._session.query(Event).filter(Event.id == event_id).first()
+
     def count_events(self) -> int:
         return self._session.query(Event).count()
