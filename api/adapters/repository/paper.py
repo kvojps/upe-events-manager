@@ -27,6 +27,7 @@ class PaperAdapter(PaperRepository):
     def get_papers(self, page: int = 1, page_size: int = 10) -> list[Paper]:
         papers = (
             self._session.query(Paper)
+            .order_by(Paper.title)
             .limit(page_size)
             .offset((page - 1) * page_size)
             .all()
@@ -35,7 +36,12 @@ class PaperAdapter(PaperRepository):
         return papers
 
     def get_papers_by_area(self, area: str) -> list[Paper]:
-        return self._session.query(Paper).filter(Paper.area == area).all()
+        return (
+            self._session.query(Paper)
+            .filter(Paper.area == area)
+            .order_by(Paper.title)
+            .all()
+        )
 
     def count_papers(self) -> int:
         return self._session.query(Paper).count()
