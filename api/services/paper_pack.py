@@ -19,6 +19,19 @@ class PaperPackService:
     async def merge_pdf_files(
         self, event_id: int, file: UploadFile = File(...)
     ) -> PutObjectResponse:
+        event = self._event_repository.get_event_by_id(event_id)
+        if not event:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Event with id {event_id} not found",
+            )
+
+        if event.all_papers_filename:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Papers already merged for this event",
+            )
+
         if not file.filename:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -31,9 +44,7 @@ class PaperPackService:
                 detail="The file must be a zip file",
             )
 
-        s3_folder_name = str(
-            self._event_repository.get_event_by_id(event_id).s3_folder_name
-        )
+        s3_folder_name = str(event.s3_folder_name)
 
         try:
             with tempfile.TemporaryDirectory() as temp_dir:

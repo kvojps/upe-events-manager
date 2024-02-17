@@ -26,6 +26,12 @@ class SummaryService:
     def create_summary_pdf(self, event_id: int) -> SummaryPdfResponse:
         event = self._event_repo.get_event_by_id(event_id)
 
+        if not event:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Event with id {event_id} not found",
+            )
+
         if event.summary_filename:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
