@@ -20,3 +20,8 @@ class EventRepository(ABC):
     def update_summary_filename(
         self, event_id: int, summary_filename: str
     ) -> Event: ...
+
+    @abstractmethod
+    def update_merged_papers_filename(
+        self, event_id: int, merged_papers_filename: str
+    ) -> Event: ...

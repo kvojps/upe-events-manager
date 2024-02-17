@@ -46,3 +46,13 @@ class EventAdapter(EventRepository):
         self._session.refresh(event)
 
         return event
+
+    def update_merged_papers_filename(
+        self, event_id: int, merged_papers_filename: str
+    ) -> Event:
+        event = self.get_event_by_id(event_id)
+        event.all_papers_filename = merged_papers_filename  # type: ignore
+        self._session.commit()
+        self._session.refresh(event)
+
+        return event
