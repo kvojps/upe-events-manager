@@ -43,3 +43,12 @@ class EventService:
         return EventResponse.from_event(
             self._event_repo.update_summary_filename(event_id, summary_filename)
         )
+
+    def update_merged_papers_filename(
+        self, event_id: int, merged_papers_filename: str
+    ) -> EventResponse:
+        return EventResponse.from_event(
+            self._event_repo.update_merged_papers_filename(
+                event_id, merged_papers_filename
+            )
+        )

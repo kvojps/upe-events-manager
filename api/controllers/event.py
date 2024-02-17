@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
@@ -6,6 +6,7 @@ from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
 from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
+from api.services.paper_pack import PaperPackService
 from api.services.summary import SummaryService
 
 router = APIRouter()
@@ -17,6 +18,8 @@ file_handler_adapter = FileHandlerS3Adapter()
 service = EventService(event_adapter)
 summary_service = SummaryService(paper_adapter, event_adapter)
 file_handler_service = FileHandlerService(file_handler_adapter)
+
+paper_pack_service = PaperPackService(file_handler_service, event_adapter)
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
@@ -55,4 +58,22 @@ def update_summary_filename(
 
     return event_service.update_summary_filename(
         event_id, file_handler_response.key_filename
+    )
+
+
+@router.patch(
+    "/{event_id}/merged-papers",
+    response_model=EventResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_merged_papers_filename(
+    event_id: int,
+    file: UploadFile = File(...),
+    paper_pack_service: PaperPackService = Depends(lambda: paper_pack_service),
+    event_service: EventService = Depends(lambda: service),
+):
+    merged_papers_response = await paper_pack_service.merge_pdf_files(event_id, file)
+
+    return event_service.update_merged_papers_filename(
+        event_id, merged_papers_response.key_filename
     )
