@@ -12,6 +12,8 @@ class EventAdapter(EventRepository):
     def create_event(self, event: EventDTO) -> Event:
         event_data = Event(
             name=event.name,
+            initial_date=event.initial_date,
+            final_date=event.final_date,
             s3_folder_name=event.name.lower().replace(" ", "_")
             + "__"
             + str(uuid.uuid4()),

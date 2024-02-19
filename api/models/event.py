@@ -8,6 +8,8 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    initial_date = Column(String)
+    final_date = Column(String)
     s3_folder_name = Column(String)
     summary_filename = Column(String)
     all_papers_filename = Column(String)
