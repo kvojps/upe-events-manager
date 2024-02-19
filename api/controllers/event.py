@@ -6,7 +6,7 @@ from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
 from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
-from api.services.paper_pack import PaperPackService
+from api.services.merged_papers import MergedPapersService
 from api.services.summary import SummaryService
 
 router = APIRouter()
@@ -19,7 +19,7 @@ service = EventService(event_adapter)
 summary_service = SummaryService(paper_adapter, event_adapter)
 file_handler_service = FileHandlerService(file_handler_adapter)
 
-paper_pack_service = PaperPackService(file_handler_service, event_adapter)
+merged_papers_service = MergedPapersService(file_handler_service, event_adapter)
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
@@ -69,10 +69,10 @@ def update_summary_filename(
 async def update_merged_papers_filename(
     event_id: int,
     file: UploadFile = File(...),
-    paper_pack_service: PaperPackService = Depends(lambda: paper_pack_service),
+    merged_papers_service: MergedPapersService = Depends(lambda: merged_papers_service),
     event_service: EventService = Depends(lambda: service),
 ):
-    merged_papers_response = await paper_pack_service.merge_pdf_files(event_id, file)
+    merged_papers_response = await merged_papers_service.merge_pdf_files(event_id, file)
 
     return event_service.update_merged_papers_filename(
         event_id, merged_papers_response.key_filename

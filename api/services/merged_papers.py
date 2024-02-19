@@ -7,7 +7,7 @@ from api.ports.event import EventRepository
 from api.services.file_handler import FileHandlerService, PutObjectResponse
 
 
-class PaperPackService:
+class MergedPapersService:
     def __init__(
         self,
         file_handler_service: FileHandlerService,
