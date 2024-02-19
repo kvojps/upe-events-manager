@@ -12,7 +12,7 @@ class Event(Base):
     final_date = Column(String)
     s3_folder_name = Column(String)
     summary_filename = Column(String)
-    all_papers_filename = Column(String)
+    merged_papers_filename = Column(String)
     anal_filename = Column(String)
 
     papers = relationship("Paper", back_populates="event")

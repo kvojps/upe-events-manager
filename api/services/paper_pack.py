@@ -26,7 +26,7 @@ class PaperPackService:
                 detail=f"Event with id {event_id} not found",
             )
 
-        if event.all_papers_filename:
+        if event.merged_papers_filename:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Papers already merged for this event",

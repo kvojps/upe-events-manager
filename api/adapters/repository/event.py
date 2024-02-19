@@ -16,7 +16,7 @@ class EventAdapter(EventRepository):
             final_date=event.final_date,
             s3_folder_name=f"""{event.name.lower().replace(" ", "_")}__{str(uuid.uuid4())}__{event.initial_date}__{event.final_date}""",
             summary_filename=None,
-            all_papers_filename=None,
+            merged_papers_filename=None,
         )
 
         self._session.add(event_data)
@@ -51,7 +51,7 @@ class EventAdapter(EventRepository):
         self, event_id: int, merged_papers_filename: str
     ) -> Event:
         event = self.get_event_by_id(event_id)
-        event.all_papers_filename = merged_papers_filename  # type: ignore
+        event.merged_papers_filename = merged_papers_filename  # type: ignore
         self._session.commit()
         self._session.refresh(event)
 
