@@ -4,6 +4,7 @@ from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from api.models.dto.paper import PaperDTO
 from api.models.responses.paper import PaperResponse
+from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 
 
@@ -20,22 +21,37 @@ class PapersPaginatedResponse(BaseModel):
 
 
 class PaperService:
-    def __init__(self, paper_repo: PaperRepository):
+    def __init__(self, paper_repo: PaperRepository, event_repo: EventRepository):
         self._paper_repo = paper_repo
+        self._event_repo = event_repo
 
     async def batch_create_papers(
         self, event_id: int, file: UploadFile = File(...)
     ) -> list[BatchPapersResponse]:
+        event = self._event_repo.get_event_by_id(event_id)
+
+        if not event:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Event not found",
+            )
+
+        if not event.merged_papers_filename:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Merged paprs file not found",
+            )
+
+        if self._paper_repo.count_papers_by_event_id(event_id) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Papers not found for this event",
+            )
+
         if not file.filename or not file.filename.endswith(".csv"):
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                 detail="Only CSV files are allowed",
-            )
-
-        if self._paper_repo.count_papers_by_event_id(event_id) > 0:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Papers already created for this event",
             )
 
         contents = await file.read()
