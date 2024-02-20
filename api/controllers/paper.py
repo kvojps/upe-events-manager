@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
 from api.services.paper import (
     BatchPapersResponse,
@@ -9,7 +10,8 @@ from api.services.paper import (
 router = APIRouter()
 
 adapter = PaperAdapter()
-service = PaperService(adapter)
+event_adapter = EventAdapter()
+service = PaperService(adapter, event_adapter)
 
 
 @router.post(
