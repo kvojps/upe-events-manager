@@ -4,6 +4,7 @@ import zipfile
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
 from api.ports.event import EventRepository
+from api.ports.paper import PaperRepository
 from api.services.file_handler import FileHandlerService, PutObjectResponse
 
 
@@ -11,15 +12,17 @@ class MergedPapersService:
     def __init__(
         self,
         file_handler_service: FileHandlerService,
-        event_repository: EventRepository,
+        event_repo: EventRepository,
+        paper_repo: PaperRepository,
     ):
         self._file_handler_service = file_handler_service
-        self._event_repository = event_repository
+        self._event_repo = event_repo
+        self._paper_repo = paper_repo
 
     async def merge_pdf_files(
         self, event_id: int, file: UploadFile = File(...)
     ) -> PutObjectResponse:
-        event = self._event_repository.get_event_by_id(event_id)
+        event = self._event_repo.get_event_by_id(event_id)
         if not event:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -30,6 +33,12 @@ class MergedPapersService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Papers already merged for this event",
+            )
+
+        if self._paper_repo.count_papers_by_event_id(event_id) > 0:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Papers already created for this event",
             )
 
         if not file.filename:
