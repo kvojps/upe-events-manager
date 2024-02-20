@@ -23,11 +23,6 @@ class PaperService:
     def __init__(self, paper_repo: PaperRepository):
         self._paper_repo = paper_repo
 
-    def create_paper(self, paper: PaperDTO) -> PaperResponse:
-        paper_data = self._paper_repo.create_paper(paper)
-
-        return PaperResponse.from_paper(paper_data)
-
     async def batch_create_papers(
         self, event_id: int, file: UploadFile = File(...)
     ) -> list[BatchPapersResponse]:
