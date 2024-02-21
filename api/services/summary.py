@@ -52,43 +52,11 @@ class SummaryService:
         y_position = 750
 
         for area in event_areas:
-            summary_pdf.setFont("Helvetica-Bold", 16)
-            if y_position < 60:
-                summary_pdf.showPage()
-                y_position = 750
-            summary_pdf.drawString(100, y_position, f"Área: {area}")
-            y_position -= 20
+            self._write_area_on_pdf(summary_pdf, area, y_position)
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                summary_pdf.setFont("Helvetica-Bold", 12)
-                title_lines = simpleSplit(
-                    "* " + str(paper.title).capitalize(),
-                    summary_pdf._fontname,
-                    summary_pdf._fontsize,
-                    400,
-                )
-                for line in title_lines:
-                    if y_position < 50:
-                        summary_pdf.showPage()
-                        y_position = 750
-                        summary_pdf.setFont("Helvetica-Bold", 12)
-                    summary_pdf.drawString(165, y_position, line)
-                    y_position -= 20
-
-                summary_pdf.setFont("Helvetica-Bold", 10)
-                authors_lines = simpleSplit(
-                    f"Autores: {paper.authors}",
-                    summary_pdf._fontname,
-                    summary_pdf._fontsize,
-                    400,
-                )
-                for line in authors_lines:
-                    if y_position < 50:
-                        summary_pdf.showPage()
-                        y_position = 750
-                        summary_pdf.setFont("Helvetica-Bold", 10)
-                    summary_pdf.drawString(165, y_position, line)
-                    y_position -= 20
+                self._write_title_on_pdf(summary_pdf, str(paper.title), y_position)
+                self._write_authors_on_pdf(summary_pdf, str(paper.authors), y_position)
 
         summary_pdf.save()
 
@@ -97,3 +65,49 @@ class SummaryService:
             summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.pdf",
             summary_pdf=buffer.getvalue(),
         )
+
+    def _write_area_on_pdf(
+        self, summary_pdf: canvas.Canvas, area: str, y_position: int
+    ):
+        summary_pdf.setFont("Helvetica-Bold", 16)
+        if y_position < 60:
+            summary_pdf.showPage()
+            y_position = 750
+        summary_pdf.drawString(100, y_position, f"Área: {area}")
+        y_position -= 20
+
+    def _write_title_on_pdf(
+        self, summary_pdf: canvas.Canvas, title: str, y_position: int
+    ):
+        summary_pdf.setFont("Helvetica-Bold", 12)
+        title_lines = simpleSplit(
+            "* " + str(title).capitalize(),
+            summary_pdf._fontname,
+            summary_pdf._fontsize,
+            400,
+        )
+        for line in title_lines:
+            if y_position < 50:
+                summary_pdf.showPage()
+                y_position = 750
+                summary_pdf.setFont("Helvetica-Bold", 12)
+            summary_pdf.drawString(165, y_position, line)
+            y_position -= 20
+
+    def _write_authors_on_pdf(
+        self, summary_pdf: canvas.Canvas, authors: str, y_position: int
+    ):
+        summary_pdf.setFont("Helvetica-Bold", 10)
+        authors_lines = simpleSplit(
+            f"Autores: {authors}",
+            summary_pdf._fontname,
+            summary_pdf._fontsize,
+            400,
+        )
+        for line in authors_lines:
+            if y_position < 50:
+                summary_pdf.showPage()
+                y_position = 750
+                summary_pdf.setFont("Helvetica-Bold", 10)
+            summary_pdf.drawString(165, y_position, line)
+            y_position -= 20
