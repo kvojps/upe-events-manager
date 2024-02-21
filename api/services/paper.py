@@ -60,33 +60,38 @@ class PaperService:
 
         batch_papers: list[BatchPapersResponse] = []
         for row in csv_reader:
-            try:
-                self._paper_repo.create_paper(
-                    PaperDTO(
-                        pdf_id=row["id"],
-                        area=row["area"],
-                        title=row["titulo"],
-                        authors=row["autores"],
-                        isIgnored=False if row["ignorar"] == "n" else True,
-                        event_id=event_id,
-                    )
-                )
-
-                batch_papers.append(
-                    BatchPapersResponse(
-                        id=int(row["id"]),
-                        message="Paper created successfully",
-                    )
-                )
-            except Exception as e:
-                batch_papers.append(
-                    BatchPapersResponse(
-                        id=int(row["id"]),
-                        message=f"Error creating paper: {str(e)}",
-                    )
-                )
+            self._create_paper_by_csv_row(event_id, row, batch_papers)
 
         return batch_papers
+
+    def _create_paper_by_csv_row(
+        self, event_id: int, row, batch_papers_response: list[BatchPapersResponse]
+    ) -> None:
+        try:
+            self._paper_repo.create_paper(
+                PaperDTO(
+                    pdf_id=row["id"],
+                    area=row["area"],
+                    title=row["titulo"],
+                    authors=row["autores"],
+                    isIgnored=False if row["ignorar"] == "n" else True,
+                    event_id=event_id,
+                )
+            )
+
+            batch_papers_response.append(
+                BatchPapersResponse(
+                    id=int(row["id"]),
+                    message="Paper created successfully",
+                )
+            )
+        except Exception as e:
+            batch_papers_response.append(
+                BatchPapersResponse(
+                    id=int(row["id"]),
+                    message=f"Error creating paper: {str(e)}",
+                )
+            )
 
     def get_papers(self, page: int = 1, page_size: int = 10) -> PapersPaginatedResponse:
         papers_data = self._paper_repo.get_papers(page, page_size)
