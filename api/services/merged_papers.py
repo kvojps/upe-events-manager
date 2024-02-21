@@ -64,35 +64,52 @@ class MergedPapersService:
                 pdf_writer = PdfWriter()
                 with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
                     for filename in zip_ref.namelist():
-                        if filename.lower().endswith(".pdf"):
-                            zip_ref.extract(filename, path=temp_dir)
-                            pdf_reader = PdfReader(os.path.join(temp_dir, filename))
-                            for page_num in range(0, len(pdf_reader.pages)):
-                                page_obj = pdf_reader.pages[page_num]
-                                pdf_writer.add_page(page_obj)
+                        zip_ref.extract(filename, path=temp_dir)
 
-                            with zip_ref.open(filename) as pdf_file:
-                                self._file_handler_service.put_object(
-                                    pdf_file.read(),
-                                    f"{s3_folder_name}",
-                                    filename,
-                                )
+                        self._add_paper_pages_to_pdf_writer(
+                            pdf_writer, temp_dir, filename
+                        )
+                        self._upload_paper_to_s3_event_folder(
+                            zip_ref, s3_folder_name, filename
+                        )
 
                 merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
-                with open(merged_papers_path, "wb+") as output_file:
-                    pdf_writer.write(merged_papers_path)
-                    pdf_writer.close()
-
-                    put_object_response = self._file_handler_service.put_object(
-                        output_file.read(),
-                        s3_folder_name,
-                        "merged_papers.pdf",
-                    )
-
-                return put_object_response
+                return self._upload_merged_papers_to_s3_event_folder(
+                    merged_papers_path, pdf_writer, s3_folder_name
+                )
         except Exception as e:
-            print(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"An error occurred while processing the file: {str(e)}",
+            )
+
+    def _add_paper_pages_to_pdf_writer(
+        self, pdf_writer: PdfWriter, temp_dir: str, filename: str
+    ):
+        pdf_reader = PdfReader(os.path.join(temp_dir, filename))
+        for page_num in range(0, len(pdf_reader.pages)):
+            page_obj = pdf_reader.pages[page_num]
+            pdf_writer.add_page(page_obj)
+
+    def _upload_paper_to_s3_event_folder(
+        self, zip_ref: zipfile.ZipFile, event_folder: str, filename: str
+    ):
+        with zip_ref.open(filename) as pdf_file:
+            self._file_handler_service.put_object(
+                pdf_file.read(),
+                f"{event_folder}",
+                filename,
+            )
+
+    def _upload_merged_papers_to_s3_event_folder(
+        self, merged_papers_path: str, pdf_writer: PdfWriter, event_folder: str
+    ) -> PutObjectResponse:
+        with open(merged_papers_path, "wb+") as output_file:
+            pdf_writer.write(merged_papers_path)
+            pdf_writer.close()
+
+            return self._file_handler_service.put_object(
+                output_file.read(),
+                event_folder,
+                "merged_papers.pdf",
             )
