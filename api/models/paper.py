@@ -12,6 +12,7 @@ class Paper(Base):
     title = Column(String)
     authors = Column(String)
     is_ignored = Column(Boolean, default=False)
+    total_pages = Column(Integer)
     event_id = Column(Integer, ForeignKey("events.id"))
 
     event = relationship("Event", back_populates="papers")

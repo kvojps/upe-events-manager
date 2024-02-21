@@ -7,4 +7,5 @@ class PaperDTO(BaseModel):
     title: str
     authors: str
     is_ignored: bool
+    total_pages: int
     event_id: int

@@ -10,6 +10,7 @@ class PaperResponse(BaseModel):
     title: str
     authors: str
     is_ignored: bool
+    total_pages: int
     event_id: int
 
     @classmethod
@@ -22,5 +23,6 @@ class PaperResponse(BaseModel):
             title=str(paper.title),
             authors=str(paper.authors),
             is_ignored=bool(paper.is_ignored),
+            total_pages=int(paper.total_pages),
             event_id=int(paper.event_id),
         )

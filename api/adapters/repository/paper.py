@@ -15,6 +15,7 @@ class PaperAdapter(PaperRepository):
             title=paper.title,
             authors=paper.authors,
             is_ignored=paper.is_ignored,
+            total_pages=paper.total_pages,
             event_id=paper.event_id,
         )
 
