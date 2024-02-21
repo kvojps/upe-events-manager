@@ -19,6 +19,7 @@ class MergedPapersService:
         self._file_handler_service = file_handler_service
         self._event_repo = event_repo
         self._paper_repo = paper_repo
+        self._papers_registered: list[str] = []
 
     async def merge_pdf_files(
         self, event_id: int, file: UploadFile = File(...)
@@ -64,7 +65,6 @@ class MergedPapersService:
 
                 pdf_writer = PdfWriter()
                 with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-                    papers_registered: list[str] = []
                     for filename in zip_ref.namelist():
                         if filename.lower().endswith(".pdf"):
                             zip_ref.extract(filename, path=temp_dir)
@@ -75,9 +75,8 @@ class MergedPapersService:
                             # self._upload_paper_to_s3_event_folder(
                             #     zip_ref, s3_folder_name, filename
                             # )
-                            self._create_paper_from_pdf(
-                                papers_registered, temp_dir, filename
-                            )
+                            self._create_paper_from_pdf(temp_dir, filename)
+                self._papers_registered = []
                 merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
                 return self._upload_merged_papers_to_s3_event_folder(
                     merged_papers_path, pdf_writer, s3_folder_name
@@ -106,14 +105,12 @@ class MergedPapersService:
                 filename,
             )
 
-    def _create_paper_from_pdf(
-        self, papers_registered: list[str], temp_dir: str, filename: str
-    ):
+    def _create_paper_from_pdf(self, temp_dir: str, filename: str):
         pdf_id = os.path.splitext(os.path.basename(filename))[0]
         pdf_reader = PdfReader(os.path.join(temp_dir, filename))
         total_pages = len(pdf_reader.pages)
 
-        if pdf_id not in papers_registered:
+        if pdf_id.split()[0] not in self._papers_registered:
             self._paper_repo.create_paper(
                 PaperDTO(
                     pdf_id=pdf_id,
@@ -125,7 +122,7 @@ class MergedPapersService:
                     event_id=None,
                 )
             )
-            papers_registered.append(pdf_id)
+            self._papers_registered.append(pdf_id)
 
     def _upload_merged_papers_to_s3_event_folder(
         self, merged_papers_path: str, pdf_writer: PdfWriter, event_folder: str
