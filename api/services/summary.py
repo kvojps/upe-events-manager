@@ -22,6 +22,7 @@ class SummaryService:
     ):
         self._paper_repo = paper_repo
         self._event_repo = event_repo
+        self._y_position = 750
 
     def create_summary_pdf(self, event_id: int) -> SummaryPdfResponse:
         event = self._event_repo.get_event_by_id(event_id)
@@ -44,7 +45,7 @@ class SummaryService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No papers found for this event",
             )
-        
+
         paper = self._paper_repo.get_first_paper()
         if not paper.title:
             raise HTTPException(
@@ -56,14 +57,12 @@ class SummaryService:
         summary_pdf = canvas.Canvas(buffer, pagesize=letter)
         summary_pdf.setFont("Helvetica-Bold", 12)
 
-        y_position = 750
-
         for area in event_areas:
-            self._write_area_on_pdf(summary_pdf, area, y_position)
+            self._write_area_on_pdf(summary_pdf, area)
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                self._write_title_on_pdf(summary_pdf, str(paper.title), y_position)
-                self._write_authors_on_pdf(summary_pdf, str(paper.authors), y_position)
+                self._write_title_on_pdf(summary_pdf, str(paper.title))
+                self._write_authors_on_pdf(summary_pdf, str(paper.authors))
 
         summary_pdf.save()
 
@@ -73,19 +72,15 @@ class SummaryService:
             summary_pdf=buffer.getvalue(),
         )
 
-    def _write_area_on_pdf(
-        self, summary_pdf: canvas.Canvas, area: str, y_position: int
-    ):
+    def _write_area_on_pdf(self, summary_pdf: canvas.Canvas, area: str):
         summary_pdf.setFont("Helvetica-Bold", 16)
-        if y_position < 60:
+        if self._y_position < 60:
             summary_pdf.showPage()
-            y_position = 750
-        summary_pdf.drawString(100, y_position, f"Área: {area}")
-        y_position -= 20
+            self._y_position = 750
+        summary_pdf.drawString(100, self._y_position, f"Área: {area}")
+        self._y_position -= 20
 
-    def _write_title_on_pdf(
-        self, summary_pdf: canvas.Canvas, title: str, y_position: int
-    ):
+    def _write_title_on_pdf(self, summary_pdf: canvas.Canvas, title: str):
         summary_pdf.setFont("Helvetica-Bold", 12)
         title_lines = simpleSplit(
             "* " + str(title).capitalize(),
@@ -94,16 +89,14 @@ class SummaryService:
             400,
         )
         for line in title_lines:
-            if y_position < 50:
+            if self._y_position < 50:
                 summary_pdf.showPage()
-                y_position = 750
+                self._y_position = 750
                 summary_pdf.setFont("Helvetica-Bold", 12)
-            summary_pdf.drawString(165, y_position, line)
-            y_position -= 20
+            summary_pdf.drawString(165, self._y_position, line)
+            self._y_position -= 20
 
-    def _write_authors_on_pdf(
-        self, summary_pdf: canvas.Canvas, authors: str, y_position: int
-    ):
+    def _write_authors_on_pdf(self, summary_pdf: canvas.Canvas, authors: str):
         summary_pdf.setFont("Helvetica-Bold", 10)
         authors_lines = simpleSplit(
             f"Autores: {authors}",
@@ -112,9 +105,9 @@ class SummaryService:
             400,
         )
         for line in authors_lines:
-            if y_position < 50:
+            if self._y_position < 50:
                 summary_pdf.showPage()
-                y_position = 750
+                self._y_position = 750
                 summary_pdf.setFont("Helvetica-Bold", 10)
-            summary_pdf.drawString(165, y_position, line)
-            y_position -= 20
+            summary_pdf.drawString(165, self._y_position, line)
+            self._y_position -= 20
