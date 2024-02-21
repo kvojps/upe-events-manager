@@ -19,12 +19,12 @@ service = PaperService(adapter, event_adapter)
     response_model=list[BatchPapersResponse],
     status_code=status.HTTP_207_MULTI_STATUS,
 )
-async def batch_create_papers(
+async def batch_update_papers(
     event_id: int,
     file: UploadFile = File(...),
     paper_service: PaperService = Depends(lambda: service),
 ):
-    return await paper_service.batch_create_papers(event_id, file)
+    return await paper_service.batch_update_papers(event_id, file)
 
 
 @router.get("", response_model=PapersPaginatedResponse, status_code=status.HTTP_200_OK)

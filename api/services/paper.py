@@ -2,7 +2,7 @@ import csv
 from math import ceil
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
-from api.models.dto.paper import PaperDTO
+from api.models.dto.paper import PaperToUpdateDTO
 from api.models.responses.paper import PaperResponse
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
@@ -25,7 +25,7 @@ class PaperService:
         self._paper_repo = paper_repo
         self._event_repo = event_repo
 
-    async def batch_create_papers(
+    async def batch_update_papers(
         self, event_id: int, file: UploadFile = File(...)
     ) -> list[BatchPapersResponse]:
         event = self._event_repo.get_event_by_id(event_id)
@@ -60,29 +60,28 @@ class PaperService:
 
         batch_papers: list[BatchPapersResponse] = []
         for row in csv_reader:
-            self._create_paper_by_csv_row(event_id, row, batch_papers)
+            self._update_paper_by_csv_row(row, batch_papers)
 
         return batch_papers
 
-    def _create_paper_by_csv_row(
-        self, event_id: int, row, batch_papers_response: list[BatchPapersResponse]
+    def _update_paper_by_csv_row(
+        self, row, batch_papers_response: list[BatchPapersResponse]
     ) -> None:
         try:
-            self._paper_repo.create_paper(
-                PaperDTO(
-                    pdf_id=row["id"],
+            self._paper_repo.update_paper(
+                row["id"],
+                PaperToUpdateDTO(
                     area=row["area"],
                     title=row["titulo"],
                     authors=row["autores"],
                     is_ignored=False if row["ignorar"] == "n" else True,
-                    event_id=event_id,
-                )
+                ),
             )
 
             batch_papers_response.append(
                 BatchPapersResponse(
                     id=int(row["id"]),
-                    message="Paper created successfully",
+                    message="Paper updated successfully",
                 )
             )
         except Exception as e:
