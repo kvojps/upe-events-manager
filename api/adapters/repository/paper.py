@@ -63,8 +63,8 @@ class PaperAdapter(PaperRepository):
 
         return [area[0] for area in areas]
 
-    def update_paper(self, paper_id: int, paper: PaperToUpdateDTO) -> Paper:
-        paper_data = self._session.query(Paper).filter(Paper.id == paper_id).first()
+    def update_paper(self, pdf_id: int, paper: PaperToUpdateDTO) -> Paper:
+        paper_data = self._session.query(Paper).filter(Paper.pdf_id == pdf_id).first()
 
         paper_data.area = paper.area
         paper_data.title = paper.title
