@@ -74,7 +74,7 @@ class PaperService:
                     area=row["area"],
                     title=row["titulo"],
                     authors=row["autores"],
-                    isIgnored=False if row["ignorar"] == "n" else True,
+                    is_ignored=False if row["ignorar"] == "n" else True,
                     event_id=event_id,
                 )
             )

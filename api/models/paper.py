@@ -11,7 +11,7 @@ class Paper(Base):
     area = Column(String)
     title = Column(String)
     authors = Column(String)
-    isIgnored = Column(Boolean, default=False)
+    is_ignored = Column(Boolean, default=False)
     event_id = Column(Integer, ForeignKey("events.id"))
 
     event = relationship("Event", back_populates="papers")

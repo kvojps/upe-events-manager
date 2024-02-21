@@ -9,7 +9,7 @@ class PaperResponse(BaseModel):
     pdf_filename: str
     title: str
     authors: str
-    isIgnored: bool
+    is_ignored: bool
     event_id: int
 
     @classmethod
@@ -21,6 +21,6 @@ class PaperResponse(BaseModel):
             pdf_filename=str(paper.pdf_id + ".pdf"),
             title=str(paper.title),
             authors=str(paper.authors),
-            isIgnored=bool(paper.isIgnored),
+            is_ignored=bool(paper.is_ignored),
             event_id=int(paper.event_id),
         )
