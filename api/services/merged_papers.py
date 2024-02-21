@@ -75,7 +75,7 @@ class MergedPapersService:
                             # self._upload_paper_to_s3_event_folder(
                             #     zip_ref, s3_folder_name, filename
                             # )
-                            self._create_paper_from_pdf(temp_dir, filename)
+                            self._create_paper_from_pdf(temp_dir, filename, event_id)
                 self._papers_registered = []
                 merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
                 return self._upload_merged_papers_to_s3_event_folder(
@@ -105,7 +105,7 @@ class MergedPapersService:
                 filename,
             )
 
-    def _create_paper_from_pdf(self, temp_dir: str, filename: str):
+    def _create_paper_from_pdf(self, temp_dir: str, filename: str, event_id: int):
         pdf_id = os.path.splitext(os.path.basename(filename))[0]
         pdf_reader = PdfReader(os.path.join(temp_dir, filename))
         total_pages = len(pdf_reader.pages)
@@ -119,7 +119,7 @@ class MergedPapersService:
                     authors=None,
                     is_ignored=None,
                     total_pages=total_pages,
-                    event_id=None,
+                    event_id=event_id,
                 )
             )
             self._papers_registered.append(pdf_id)
