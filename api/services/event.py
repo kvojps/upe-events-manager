@@ -1,4 +1,5 @@
 from math import ceil
+from fastapi import HTTPException
 from pydantic import BaseModel
 from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
@@ -40,6 +41,11 @@ class EventService:
     def update_summary_filename(
         self, event_id: int, summary_filename: str
     ) -> EventResponse:
+        if not self._event_repo.get_event_by_id(event_id):
+            raise HTTPException(
+                status_code=404, detail=f"Event with id {event_id} not found"
+            )
+
         return EventResponse.from_event(
             self._event_repo.update_summary_filename(event_id, summary_filename)
         )
@@ -47,6 +53,11 @@ class EventService:
     def update_merged_papers_filename(
         self, event_id: int, merged_papers_filename: str
     ) -> EventResponse:
+        if not self._event_repo.get_event_by_id(event_id):
+            raise HTTPException(
+                status_code=404, detail=f"Event with id {event_id} not found"
+            )
+
         return EventResponse.from_event(
             self._event_repo.update_merged_papers_filename(
                 event_id, merged_papers_filename
