@@ -1,5 +1,5 @@
 from api.config.postgres import SessionLocal
-from api.models.dto.paper import PaperDTO
+from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
 from api.models.paper import Paper
 from api.ports.paper import PaperRepository
 
@@ -62,3 +62,16 @@ class PaperAdapter(PaperRepository):
         )
 
         return [area[0] for area in areas]
+
+    def update_paper(self, paper_id: int, paper: PaperToUpdateDTO) -> Paper:
+        paper_data = self._session.query(Paper).filter(Paper.id == paper_id).first()
+
+        paper_data.area = paper.area
+        paper_data.title = paper.title
+        paper_data.authors = paper.authors
+        paper_data.is_ignored = paper.is_ignored
+
+        self._session.commit()
+        self._session.refresh(paper_data)
+
+        return paper_data

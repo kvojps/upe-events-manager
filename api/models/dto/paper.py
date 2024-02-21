@@ -10,3 +10,10 @@ class PaperDTO(BaseModel):
     is_ignored: Optional[bool]
     total_pages: int
     event_id: Optional[int]
+
+
+class PaperToUpdateDTO(BaseModel):
+    area: str
+    title: str
+    authors: str
+    is_ignored: bool
