@@ -44,6 +44,9 @@ class PaperAdapter(PaperRepository):
             .all()
         )
 
+    def get_paper_by_pdf_id(self, pdf_id: str) -> Paper:
+        return self._session.query(Paper).filter(Paper.pdf_id == pdf_id).first()
+
     def count_papers(self) -> int:
         return self._session.query(Paper).count()
 
