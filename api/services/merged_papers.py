@@ -66,17 +66,18 @@ class MergedPapersService:
                 with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
                     papers_registered: list[str] = []
                     for filename in zip_ref.namelist():
-                        zip_ref.extract(filename, path=temp_dir)
+                        if filename.lower().endswith(".pdf"):
+                            zip_ref.extract(filename, path=temp_dir)
 
-                        self._add_paper_pages_to_pdf_writer(
-                            pdf_writer, temp_dir, filename
-                        )
-                        # self._upload_paper_to_s3_event_folder(
-                        #     zip_ref, s3_folder_name, filename
-                        # )
-                        self._create_paper_from_pdf(
-                            papers_registered, temp_dir, filename
-                        )
+                            self._add_paper_pages_to_pdf_writer(
+                                pdf_writer, temp_dir, filename
+                            )
+                            # self._upload_paper_to_s3_event_folder(
+                            #     zip_ref, s3_folder_name, filename
+                            # )
+                            self._create_paper_from_pdf(
+                                papers_registered, temp_dir, filename
+                            )
                 merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
                 return self._upload_merged_papers_to_s3_event_folder(
                     merged_papers_path, pdf_writer, s3_folder_name
