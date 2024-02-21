@@ -12,3 +12,20 @@
 * Na pasta raíz do projeto:
   * uvicorn api.app:app --reload
 * Acesse [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) **(Swagger do projeto)**
+
+# Fluxo de criação do anal
+- Criar evento
+- Criar o PDF com todos os trabalhos juntos (fluxo "merged_papers")
+  - Entrada: Arquivo ZIP
+  - Durante esta etapa, é feito um pré cadastro dos trabalhos ("papers") com as informações sobre o id do trabalho e o total de páginas
+  - Saída: Arquivo PDF com todos os trabalhos agrupados
+- Preencher todos os papers pré-cadastrados com o restante das informações
+  - Entrada: Arquivo CSV
+  - Durante esta etapa, o arquivo CSV é percorrido e em cada linha é obtido o campo id que é usado para buscar o trabalho no banco e atualizá-lo com o restante das informações.
+- Gerar sumário
+  - Por meio dos trabalhos totalmente cadastrados é criado o sumário.
+  - Saída: Arquivo PDF
+- Gerar o anal
+  - Entrada: Arquivo PDF
+  - Realizar a junção de todos os arquivos PDF gerados até o momento.
+  - Saída: Arquivo PDF
