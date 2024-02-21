@@ -19,7 +19,7 @@ service = EventService(event_adapter)
 summary_service = SummaryService(paper_adapter, event_adapter)
 file_handler_service = FileHandlerService(file_handler_adapter)
 
-merged_papers_service = MergedPapersService(file_handler_service, event_adapter)
+merged_papers_service = MergedPapersService(file_handler_service, event_adapter, paper_adapter)
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
