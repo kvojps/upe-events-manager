@@ -11,7 +11,7 @@ class Paper(Base):
     area = Column(String)
     title = Column(String)
     authors = Column(String)
-    is_ignored = Column(Boolean, default=False)
+    is_ignored = Column(Boolean)
     total_pages = Column(Integer)
     event_id = Column(Integer, ForeignKey("events.id"))
 
