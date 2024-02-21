@@ -17,6 +17,9 @@ class PaperRepository(ABC):
     def get_paper_by_pdf_id(self, pdf_id: str) -> Paper: ...
 
     @abstractmethod
+    def get_first_paper(self) -> Paper: ...
+
+    @abstractmethod
     def count_papers(self) -> int: ...
 
     @abstractmethod

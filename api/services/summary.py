@@ -44,6 +44,13 @@ class SummaryService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No papers found for this event",
             )
+        
+        paper = self._paper_repo.get_first_paper()
+        if not paper.title:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Papers cannot have empty fields to generate the summary",
+            )
 
         buffer = BytesIO()
         summary_pdf = canvas.Canvas(buffer, pagesize=letter)
