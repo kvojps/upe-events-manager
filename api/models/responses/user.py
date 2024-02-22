@@ -12,7 +12,7 @@ class UserResponse(BaseModel):
         return cls(id=user.id, username=user.username, is_active=user.is_active)
 
 
-class UserLoginResponse(BaseModel):
+class AuthResponse(BaseModel):
     access_token: str
     expires_in: datetime
     user: UserResponse

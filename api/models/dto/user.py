@@ -27,6 +27,6 @@ class UserDTO(BaseModel):
         return value
 
 
-class UserLoginDTO(BaseModel):
+class AuthDTO(BaseModel):
     username: str
     password: str
