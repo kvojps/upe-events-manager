@@ -20,12 +20,7 @@ class AuthService:
         self._JWT_ALGORITHM = settings.JWT_ALGORITHM
 
     def register_user(self, user_request: UserDTO) -> UserResponse:
-        # TODO: Validar a melhor forma de transformar o DTO em um User
-        user = User(
-            username=user_request.email.split("@")[0],
-            email=user_request.email,
-            password=crypt_context.hash(user_request.password),
-        )
+        user = User.from_dto(user_request)
 
         try:
             user_created = self._user_repo.create_user(user)
