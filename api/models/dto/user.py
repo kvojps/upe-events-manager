@@ -17,6 +17,15 @@ class UserDTO(BaseModel):
 
         return value
 
+    @validator("email")
+    def validate_email(cls, value: str):
+        regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+
+        if not re.match(regex, value):
+            raise ValueError("Invalid email address")
+
+        return value
+
 
 class UserLoginDTO(BaseModel):
     username: str
