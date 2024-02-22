@@ -10,3 +10,5 @@ python-multipart
 PyPDF2
 reportlab
 reportlab-stubs
+python-jose
+passlib
