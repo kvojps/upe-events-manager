@@ -1,26 +1,20 @@
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from api.adapters.repository.user import UserAdapter
 from api.models.user import UserType
-from api.services.auth_user import AuthService
+from api.utils.jwt import verify_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-adapter = UserAdapter()
-service = AuthService(adapter)
 
-
-def token_verifier(
+async def is_valid_token(
     token=Depends(oauth2_scheme),
-    service: AuthService = Depends(lambda: service),
 ):
-    service.verify_token(token)
+    await verify_token(token)
 
 
-def is_super_user(
+async def is_super_user(
     token=Depends(oauth2_scheme),
-    service: AuthService = Depends(lambda: service),
 ):
-    user = service.verify_token(token)
+    user = await verify_token(token)
 
     return user.user_type == UserType.SUPER.value
