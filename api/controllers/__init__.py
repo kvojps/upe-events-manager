@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from api.security import is_valid_token
+from .auth import router as auth_user_route
 from .event import router as event_router
 from .health_check import router as health_check_router
 from .paper import router as paper_router
@@ -6,7 +8,16 @@ from .paper import router as paper_router
 main_router = APIRouter()
 
 main_router.include_router(
-    health_check_router, prefix="/health_check", tags=["Health check"]
+    auth_user_route,
+    prefix="/auth",
+    tags=["User authentication"],
+)
+
+main_router.include_router(
+    health_check_router,
+    prefix="/health_check",
+    tags=["Health check"],
+    dependencies=[Depends(is_valid_token)],
 )
 
 main_router.include_router(event_router, prefix="/events", tags=["Events"])

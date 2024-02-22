@@ -2,12 +2,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from api.config.postgres import init_postgres_db
 from api.controllers import main_router
-from api.models import create_tables
+from api.models import create_tables, init_config_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    init_config_db()
     init_postgres_db()
 
     yield
