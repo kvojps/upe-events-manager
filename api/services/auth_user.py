@@ -69,3 +69,5 @@ class AuthService:
 
         if user_db is None:
             raise HTTPException(status_code=401, detail="Invalid token")
+
+        return user_db
