@@ -20,7 +20,6 @@ def register_user(
     service: AuthService = Depends(lambda: service),
     is_super: bool = Depends(is_super_user),
 ):
-    print(is_super)
     if not is_super:
         raise HTTPException(status_code=403, detail="Not authorized")
 
