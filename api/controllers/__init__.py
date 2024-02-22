@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends
-
 from api.security import is_valid_token
+from .auth import router as auth_user_route
 from .event import router as event_router
 from .health_check import router as health_check_router
 from .paper import router as paper_router
-from .auth_user import router as auth_user_route
 
 main_router = APIRouter()
 

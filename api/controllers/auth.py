@@ -4,7 +4,7 @@ from api.adapters.repository.user import UserAdapter
 from api.models.dto.user import AuthDTO, UserDTO
 from api.models.responses.user import AuthResponse, UserResponse
 from api.security import is_super_user
-from api.services.auth_user import AuthService
+from api.services.auth import AuthService
 
 router = APIRouter()
 
@@ -29,7 +29,5 @@ def authenticate_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
     service: AuthService = Depends(lambda: service),
 ):
-    user_request = AuthDTO(
-        username=form_data.username, password=form_data.password
-    )
+    user_request = AuthDTO(username=form_data.username, password=form_data.password)
     return service.authenticate_user(user_request)
