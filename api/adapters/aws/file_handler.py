@@ -44,7 +44,7 @@ class TransferCallback:
 
             target = self._target_size * MB
             sys.stdout.write(
-                f"\r{self._total_transferred} of {target} transferred "
+                f"\r{self._total_transferred} of {target} carregado para o s3 "
                 f"({(self._total_transferred / target) * 100:.2f}%)."
             )
             sys.stdout.flush()
@@ -88,7 +88,7 @@ class FileHandlerS3Adapter(FileHandlerProvider):
                 Callback=transfer_callback,
                 Config=config,
             )
-            print("Progresso do upload: " + transfer_callback.thread_info)
+            transfer_callback.thread_info
 
             os.remove(temp_file_path)
 

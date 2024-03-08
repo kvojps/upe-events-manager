@@ -1,5 +1,7 @@
 import os
+import sys
 import tempfile
+import time
 import zipfile
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
@@ -7,6 +9,7 @@ from api.models.dto.paper import PaperDTO
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 from api.services.file_handler import FileHandlerService, PutObjectResponse
+from api.utils.progress_checker import ProgressChecker
 
 
 class MergedPapersService:
@@ -65,6 +68,7 @@ class MergedPapersService:
 
                 pdf_writer = PdfWriter()
                 with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+                    current_file = 1
                     for filename in zip_ref.namelist():
                         if filename.lower().endswith(".pdf"):
                             zip_ref.extract(filename, path=temp_dir)
@@ -76,6 +80,10 @@ class MergedPapersService:
                             #     zip_ref, s3_folder_name, filename
                             # )
                             self._create_paper_from_pdf(temp_dir, filename, event_id)
+                            ProgressChecker.get_progress(
+                                "Progresso do pré-cadastro", current_file, len(zip_ref.namelist())
+                            )
+                        current_file += 1
                 self._papers_registered = []
                 merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
                 return self._upload_merged_papers_to_s3_event_folder(
@@ -128,8 +136,10 @@ class MergedPapersService:
         self, merged_papers_path: str, pdf_writer: PdfWriter, event_folder: str
     ) -> PutObjectResponse:
         with open(merged_papers_path, "wb+") as output_file:
+            start_time = time.time()
             pdf_writer.write(merged_papers_path)
             pdf_writer.close()
+            sys.stdout.write(f"\nTempo para criação do zip: {time.time() - start_time:.2f} seconds\n")
 
             return self._file_handler_service.put_object(
                 output_file.read(),
