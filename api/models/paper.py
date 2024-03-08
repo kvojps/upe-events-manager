@@ -7,7 +7,7 @@ class Paper(Base):
     __tablename__ = "papers"
 
     id = Column(Integer, primary_key=True, index=True)
-    pdf_id = Column(String, unique=True, index=True)
+    pdf_id = Column(String, index=True)
     area = Column(String)
     title = Column(String)
     authors = Column(String)
