@@ -46,6 +46,49 @@ class MergedPapersService:
                 detail="Papers already created for this event",
             )
 
+        s3_folder_name = str(event.s3_folder_name)
+
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                merged_papers_pdf_writer = await self._process_zip_file(
+                    temp_dir, file, event_id
+                )
+
+                merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
+                return self._upload_merged_papers_to_s3_event_folder(
+                    merged_papers_path, merged_papers_pdf_writer, s3_folder_name
+                )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"An error occurred while processing the file: {str(e)}",
+            )
+
+    async def _process_zip_file(
+        self, temp_dir: str, file: UploadFile, event_id: int
+    ) -> PdfWriter:
+        zip_file_path = await self._add_zip_file_to_temp_dir(temp_dir, file)
+
+        pdf_writer = PdfWriter()
+        with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+            current_file = 1
+            for filename in zip_ref.namelist():
+                if filename.lower().endswith(".pdf"):
+                    self._proccess_pdf_file(
+                        zip_ref,
+                        pdf_writer,
+                        temp_dir,
+                        filename,
+                        event_id,
+                        current_file,
+                    )
+                current_file += 1
+
+        self._papers_registered = []
+
+        return pdf_writer
+
+    async def _add_zip_file_to_temp_dir(self, temp_dir: str, file: UploadFile) -> str:
         if not file.filename:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -58,42 +101,29 @@ class MergedPapersService:
                 detail="The file must be a zip file",
             )
 
-        s3_folder_name = str(event.s3_folder_name)
+        zip_file_path = os.path.join(temp_dir, file.filename)
+        with open(zip_file_path, "wb") as buffer:
+            buffer.write(await file.read())
 
-        try:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                zip_file_path = os.path.join(temp_dir, file.filename)
-                with open(zip_file_path, "wb") as buffer:
-                    buffer.write(await file.read())
+        return zip_file_path
 
-                pdf_writer = PdfWriter()
-                with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-                    current_file = 1
-                    for filename in zip_ref.namelist():
-                        if filename.lower().endswith(".pdf"):
-                            zip_ref.extract(filename, path=temp_dir)
+    def _proccess_pdf_file(
+        self, zip_ref, pdf_writer, temp_dir, filename, event_id, current_file
+    ) -> None:
+        zip_ref.extract(filename, path=temp_dir)
 
-                            self._add_paper_pages_to_pdf_writer(
-                                pdf_writer, temp_dir, filename
-                            )
-                            # self._upload_paper_to_s3_event_folder(
-                            #     zip_ref, s3_folder_name, filename
-                            # )
-                            self._create_paper_from_pdf(temp_dir, filename, event_id)
-                            ProgressChecker.get_progress(
-                                "Progresso do pré-cadastro", current_file, len(zip_ref.namelist())
-                            )
-                        current_file += 1
-                self._papers_registered = []
-                merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
-                return self._upload_merged_papers_to_s3_event_folder(
-                    merged_papers_path, pdf_writer, s3_folder_name
-                )
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"An error occurred while processing the file: {str(e)}",
-            )
+        self._add_paper_pages_to_pdf_writer(pdf_writer, temp_dir, filename)
+
+        # self._upload_paper_to_s3_event_folder(
+        #     zip_ref, s3_folder_name, filename
+        # )
+
+        self._create_paper_from_pdf(temp_dir, filename, event_id)
+        ProgressChecker.get_progress(
+            "Progresso do pré-cadastro",
+            current_file,
+            len(zip_ref.namelist()),
+        )
 
     def _add_paper_pages_to_pdf_writer(
         self, pdf_writer: PdfWriter, temp_dir: str, filename: str
@@ -139,7 +169,9 @@ class MergedPapersService:
             start_time = time.time()
             pdf_writer.write(merged_papers_path)
             pdf_writer.close()
-            sys.stdout.write(f"\nTempo para criação do zip: {time.time() - start_time:.2f} seconds\n")
+            sys.stdout.write(
+                f"\nTempo para criação do zip: {time.time() - start_time:.2f} seconds\n"
+            )
 
             return self._file_handler_service.put_object(
                 output_file.read(),
