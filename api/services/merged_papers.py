@@ -72,6 +72,7 @@ class MergedPapersService:
         pdf_writer = PdfWriter()
         with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             current_file = 1
+            start_time = time.time()
             for filename in zip_ref.namelist():
                 if filename.lower().endswith(".pdf"):
                     self._proccess_pdf_file(
@@ -81,6 +82,7 @@ class MergedPapersService:
                         filename,
                         event_id,
                         current_file,
+                        start_time,
                     )
                 current_file += 1
 
@@ -108,7 +110,14 @@ class MergedPapersService:
         return zip_file_path
 
     def _proccess_pdf_file(
-        self, zip_ref, pdf_writer, temp_dir, filename, event_id, current_file
+        self,
+        zip_ref: zipfile.ZipFile,
+        pdf_writer: PdfWriter,
+        temp_dir: str,
+        filename: str,
+        event_id: int,
+        current_file: int,
+        start_time: float,
     ) -> None:
         zip_ref.extract(filename, path=temp_dir)
 
@@ -123,6 +132,7 @@ class MergedPapersService:
             "Progresso do pré-cadastro",
             current_file,
             len(zip_ref.namelist()),
+            start_time,
         )
 
     def _add_paper_pages_to_pdf_writer(
@@ -135,7 +145,7 @@ class MergedPapersService:
 
     def _upload_paper_to_s3_event_folder(
         self, zip_ref: zipfile.ZipFile, event_folder: str, filename: str
-    ):
+    ) -> None:
         with zip_ref.open(filename) as pdf_file:
             self._file_handler_service.put_object(
                 pdf_file.read(),
@@ -143,7 +153,9 @@ class MergedPapersService:
                 filename,
             )
 
-    def _create_paper_from_pdf(self, temp_dir: str, filename: str, event_id: int):
+    def _create_paper_from_pdf(
+        self, temp_dir: str, filename: str, event_id: int
+    ) -> None:
         pdf_id = os.path.splitext(os.path.basename(filename))[0]
         pdf_reader = PdfReader(os.path.join(temp_dir, filename))
         total_pages = len(pdf_reader.pages)

@@ -1,12 +1,13 @@
 import os
-import sys
 import tempfile
 import threading
+import time
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 from api.config.dynaconf import settings
 from api.config.s3 import S3Config
 from api.ports.file_handler import FileHandlerProvider
+from api.utils.progress_checker import ProgressChecker
 
 MB = 1024 * 1024
 
@@ -20,11 +21,13 @@ class TransferCallback:
     displaying progress to the user and collecting data about the transfer.
     """
 
-    def __init__(self, target_size):
+    def __init__(self, target_size: int, detail: str):
+        self._detail = detail
+        self._start_time = time.time()
         self._target_size = target_size
         self._total_transferred = 0
         self._lock = threading.Lock()
-        self.thread_info = {}
+        self.thread_info = {}  # type: ignore
 
     def __call__(self, bytes_transferred):
         """
@@ -43,11 +46,10 @@ class TransferCallback:
                 self.thread_info[thread.ident] += bytes_transferred
 
             target = self._target_size * MB
-            sys.stdout.write(
-                f"\r{self._total_transferred} of {target} carregado para o s3 "
-                f"({(self._total_transferred / target) * 100:.2f}%)."
+
+            ProgressChecker.get_progress(
+                self._detail, self._total_transferred, target, self._start_time
             )
-            sys.stdout.flush()
 
 
 class FileHandlerS3Adapter(FileHandlerProvider):
@@ -73,7 +75,9 @@ class FileHandlerS3Adapter(FileHandlerProvider):
     ) -> str:
         try:
             file_size_mb = len(file_to_upload) // (1024 * 1024)
-            transfer_callback = TransferCallback(file_size_mb)
+            transfer_callback = TransferCallback(
+                file_size_mb, "Progresso multipart upload"
+            )
             config = TransferConfig(multipart_chunksize=1 * MB)
             key_obj = folder + "/" + key_obj
 
