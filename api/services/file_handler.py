@@ -17,11 +17,18 @@ class FileHandlerService:
     ) -> PutObjectResponse:
         key_filename = ""
         try:
-            key_filename = self._file_handler_repo.put_object(
-                file_data,
-                folder_name,
-                file_name,
-            )
+            if len(file_data) < 25e6:
+                key_filename = self._file_handler_repo.put_object(
+                    file_data,
+                    folder_name,
+                    file_name,
+                )
+            else:
+                key_filename = self._file_handler_repo.multipart_object_upload(
+                    file_data,
+                    folder_name,
+                    file_name,
+                )
         except ClientError as e:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)
