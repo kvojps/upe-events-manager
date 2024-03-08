@@ -56,3 +56,11 @@ class EventAdapter(EventRepository):
         self._session.refresh(event)
 
         return event
+
+    def update_anal_filename(self, event_id: int, anal_filename: str) -> Event:
+        event = self.get_event_by_id(event_id)
+        event.anal_filename = anal_filename # type: ignore
+        self._session.commit()
+        self._session.refresh(event)
+
+        return event

@@ -35,3 +35,11 @@ class FileHandlerService:
             )
 
         return PutObjectResponse(key_filename=key_filename)
+
+    def download_object(self, key: str, download_file_path: str) -> None:
+        try:
+            self._file_handler_repo.download_object(key, download_file_path)
+        except ClientError as e:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)
+            )

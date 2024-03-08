@@ -4,6 +4,7 @@ from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.event import EventDTO
 from api.models.responses.event import EventResponse
+from api.services.anal import AnalService
 from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
 from api.services.merged_papers import MergedPapersService
@@ -19,7 +20,11 @@ service = EventService(event_adapter)
 summary_service = SummaryService(paper_adapter, event_adapter)
 file_handler_service = FileHandlerService(file_handler_adapter)
 
-merged_papers_service = MergedPapersService(file_handler_service, event_adapter, paper_adapter)
+merged_papers_service = MergedPapersService(
+    file_handler_service, event_adapter, paper_adapter
+)
+
+anal_service = AnalService(file_handler_service, event_adapter)
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
@@ -77,3 +82,19 @@ async def update_merged_papers_filename(
     return event_service.update_merged_papers_filename(
         event_id, merged_papers_response.key_filename
     )
+
+
+@router.patch(
+    "/{event_id}/anal",
+    response_model=EventResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_anal_filename(
+    event_id: int,
+    cover: UploadFile = File(...),
+    anal_service: AnalService = Depends(lambda: anal_service),
+    event_service: EventService = Depends(lambda: service),
+):
+    anal_pdf_response = await anal_service.create_anal_pdf(event_id, cover)
+
+    return event_service.update_anal_filename(event_id, anal_pdf_response.key_filename)

@@ -63,3 +63,13 @@ class EventService:
                 event_id, merged_papers_filename
             )
         )
+
+    def update_anal_filename(self, event_id: int, anal_filename: str) -> EventResponse:
+        if not self._event_repo.get_event_by_id(event_id):
+            raise HTTPException(
+                status_code=404, detail=f"Event with id {event_id} not found"
+            )
+
+        return EventResponse.from_event(
+            self._event_repo.update_anal_filename(event_id, anal_filename)
+        )

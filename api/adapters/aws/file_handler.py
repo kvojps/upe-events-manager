@@ -57,6 +57,14 @@ class FileHandlerS3Adapter(FileHandlerProvider):
         self._session = S3Config()
         self._bucket_name = settings.S3_BUCKET_NAME
 
+    def download_object(self, key: str, download_file_path: str) -> None:
+        try:
+            self._session.s3_client().download_file(
+                self._bucket_name, key, download_file_path
+            )
+        except ClientError as e:
+            raise e
+
     def put_object(self, file_to_upload: bytes, folder: str, key_obj: str) -> str:
         try:
             key = folder + "/" + key_obj
