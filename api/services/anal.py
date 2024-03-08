@@ -1,5 +1,7 @@
 import os
+import sys
 import tempfile
+import time
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
 from api.ports.event import EventRepository
@@ -44,35 +46,65 @@ class AnalService:
         with tempfile.TemporaryDirectory() as temp_dir:
             pdf_writer = PdfWriter()
 
-            cover_file_path = os.path.join(temp_dir, cover.filename)
-            with open(cover_file_path, "wb") as buffer:
-                buffer.write(await cover.read())
+            cover_file_path = await self._add_cover_file_to_temp_dir(temp_dir, cover)
             self._add_pdf_pages_to_pdf_writer(pdf_writer, cover_file_path)
 
-            summary_file_path = f"{temp_dir}/summary.pdf"
-            self._file_handler_service.download_object(
-                str(event.summary_filename), summary_file_path
+            summary_file_path = self._download_file(
+                temp_dir, str(event.summary_filename), "summary"
             )
             self._add_pdf_pages_to_pdf_writer(pdf_writer, summary_file_path)
 
-            merged_papers_file_path = f"{temp_dir}/merged_papers.pdf"
-            self._file_handler_service.download_object(
-                str(event.merged_papers_filename), merged_papers_file_path
+            merged_papers_file_path = self._download_file(
+                temp_dir, str(event.merged_papers_filename), "merged_papers"
             )
             self._add_pdf_pages_to_pdf_writer(pdf_writer, merged_papers_file_path)
 
-            anal_file_path = os.path.join(temp_dir, f"{temp_dir}/anal.pdf")
-            with open(anal_file_path, "wb+") as output_file:
-                pdf_writer.write(anal_file_path)
-                pdf_writer.close()
+            output_file = self._merge_anal_pdfs(temp_dir, pdf_writer)
 
-                return self._file_handler_service.put_object(
-                    output_file.read(),
-                    str(event.s3_folder_name),
-                    "anal.pdf",
-                )
+            return self._file_handler_service.put_object(
+                output_file,
+                str(event.s3_folder_name),
+                "anal.pdf",
+            )
 
-    def _add_pdf_pages_to_pdf_writer(self, pdf_writer: PdfWriter, file_path: str):
+    async def _add_cover_file_to_temp_dir(
+        self, temp_dir: str, cover: UploadFile
+    ) -> str:
+        start_time = time.time()
+
+        cover_file_path = os.path.join(temp_dir, cover.filename)  # type: ignore
+        with open(cover_file_path, "wb") as buffer:
+            buffer.write(await cover.read())
+
+        sys.stdout.write(f"Download cover: {time.time() - start_time} seconds\n")
+
+        return cover_file_path
+
+    def _download_file(
+        self, temp_dir: str, s3_filename: str, filename_to_save: str
+    ) -> str:
+        start_time = time.time()
+
+        file_path = f"{temp_dir}/{filename_to_save}.pdf"
+        self._file_handler_service.download_object(s3_filename, file_path)
+
+        sys.stdout.write(
+            f"Download {filename_to_save}: {time.time() - start_time} seconds\n"
+        )
+
+        return file_path
+
+    def _merge_anal_pdfs(self, temp_dir: str, pdf_writer: PdfWriter) -> bytes:
+        anal_file_path = os.path.join(temp_dir, f"{temp_dir}/anal.pdf")
+        with open(anal_file_path, "wb+") as output_file:
+            pdf_writer.write(anal_file_path)
+            pdf_writer.close()
+
+            return output_file.read()
+
+    def _add_pdf_pages_to_pdf_writer(
+        self, pdf_writer: PdfWriter, file_path: str
+    ) -> None:
         pdf_reader = PdfReader(file_path)
 
         for page_num in range(0, len(pdf_reader.pages)):
