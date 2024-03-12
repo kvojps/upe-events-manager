@@ -12,7 +12,13 @@ adapter = UserAdapter()
 service = AuthService(adapter)
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post(
+    "/register", 
+    responses=
+        {201: {"model": UserResponse}, 
+         403: {"description": "Not authorized"}},
+    response_model=UserResponse
+    )
 def create_user(
     user_request: UserDTO,
     service: AuthService = Depends(lambda: service),
@@ -24,7 +30,12 @@ def create_user(
     return service.create_user(user_request)
 
 
-@router.post("/login", response_model=AuthResponse)
+@router.post(
+    "/login",
+    responses=
+        {200: {"model": AuthResponse}, 
+         401: {"description": "Unauthorized"}},
+    response_model=AuthResponse)
 def authenticate_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
     service: AuthService = Depends(lambda: service),
