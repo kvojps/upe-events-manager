@@ -46,6 +46,9 @@ def get_events(
 @router.patch(
     "/{event_id}/summary",
     response_model=EventResponse,
+    responses=
+        {200: {"model": EventResponse}, 
+         404: {"description": "Event not found"}},
     status_code=status.HTTP_200_OK,
 )
 def update_summary_filename(
