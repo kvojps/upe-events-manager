@@ -72,6 +72,13 @@ def update_summary_filename(
 @router.patch(
     "/{event_id}/merged-papers",
     response_model=EventResponse,
+    responses=
+        {200: {"model": EventResponse},
+         400: {"description": "Papers already merged for this event"},         
+         404: {"description": "Event not found"},
+         409: {"description": "Papers already created for this event"},
+         415: {"description": "Unsupported Media Type"}, 
+         500: {"description": "An error occurred while processing the file"}},
     status_code=status.HTTP_200_OK,
 )
 async def update_merged_papers_filename(
