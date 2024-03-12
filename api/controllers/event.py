@@ -100,7 +100,7 @@ async def update_merged_papers_filename(
 @router.patch(
     "/{event_id}/anal",
     response_model=EventResponse,
-    response= {200: {"model": EventResponse},
+    responses= {200: {"model": EventResponse},
                404: {"description": "Event with id {event_id} not found"},
                415: {"description": "The file must be a pdf file"},
                500: {"description": "An error occurred while processing the file"}},
