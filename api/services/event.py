@@ -81,3 +81,19 @@ class EventService:
         ]
 
         return events_response
+
+    def get_events_by_initial_date(self, initial_date: str) -> list[EventResponse]:
+        events_data = self._event_repo.get_event_by_initial_date(initial_date)
+        events_response = [
+            EventResponse.from_event(event_data) for event_data in events_data
+        ]
+
+        return events_response
+    
+    def get_events_by_final_date(self, final_date: str) -> list[EventResponse]:
+        events_data = self._event_repo.get_event_by_final_date(final_date)
+        events_response = [
+            EventResponse.from_event(event_data) for event_data in events_data
+        ]
+
+        return events_response
