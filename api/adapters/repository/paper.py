@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 from api.config.postgres import SessionLocal
 from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
 from api.models.paper import Paper
@@ -65,6 +67,37 @@ class PaperAdapter(PaperRepository):
         )
 
         return [area[0] for area in areas]
+
+    def get_not_ignored_papers(self) -> List[Paper]:
+        return (
+            self._session.query(Paper)
+            .filter(Paper.is_ignored == False)
+            .order_by(Paper.title)
+            .all()
+        )
+
+    def filter_papers_by_criteria(
+            self,
+            title: Optional[str] = None,
+            author: Optional[str] = None,
+            pdf_id: Optional[str] = None,
+            area: Optional[str] = None,
+            event_id: Optional[int] = None,
+    ) -> List[Paper]:
+        query = self._session.query(Paper)
+
+        if title:
+            query = query.filter(Paper.title == title)
+        if author:
+            query = query.filter(Paper.authors.contains(author))
+        if pdf_id:
+            query = query.filter(Paper.pdf_id == pdf_id)
+        if area:
+            query = query.filter(Paper.area == area)
+        if event_id:
+            query = query.filter(Paper.event_id == event_id)
+
+        return query.order_by(Paper.title).all()
 
     def update_paper(self, pdf_id: int, paper: PaperToUpdateDTO) -> Paper:
         paper_data = self._session.query(Paper).filter(Paper.pdf_id == pdf_id).first()

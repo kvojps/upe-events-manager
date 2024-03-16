@@ -1,7 +1,11 @@
 import csv
 from math import ceil
+from typing import Optional, List
+
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
+
+from api.models import Paper
 from api.models.dto.paper import PaperToUpdateDTO
 from api.models.responses.paper import PaperResponse
 from api.ports.event import EventRepository
@@ -103,4 +107,23 @@ class PaperService:
             total_papers=self._paper_repo.count_papers(),
             total_pages=ceil(self._paper_repo.count_papers() / page_size),
             current_page=page,
+        )
+
+    def get_not_ignored_papers(self) -> List[Paper]:
+        not_ignored_papers = self._paper_repo.get_not_ignored_papers()
+        if not not_ignored_papers:
+            raise HTTPException(status_code=404, detail=" No -not ignored papers- found")
+
+        return not_ignored_papers
+
+    def filter_papers_by_criteria(
+            self,
+            title: Optional[str] = None,
+            author: Optional[str] = None,
+            pdf_id: Optional[str] = None,
+            area: Optional[str] = None,
+            event_id: Optional[int] = None,
+    ) -> List[Paper]:
+        return self._paper_repo.filter_papers_by_criteria(
+            title=title, author=author, pdf_id=pdf_id, area=area, event_id=event_id
         )
