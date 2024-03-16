@@ -66,7 +66,7 @@ class EventAdapter(EventRepository):
         return event
     
     def get_events_by_name(self, name: str) -> list[Event]:
-        return self._session.query(Event).filter(Event.name == name).all()
+        return self._session.query(Event).filter(Event.name.contains(name)).all()
     
     def get_event_by_initial_date(self, initial_date: str) -> list[Event]:
         return self._session.query(Event).filter(Event.initial_date == initial_date).all()
