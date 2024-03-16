@@ -1,5 +1,7 @@
 import csv
 from math import ceil
+from typing import List, Union, Optional
+
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from api.models.dto.paper import PaperToUpdateDTO
@@ -26,8 +28,8 @@ class PaperService:
         self._event_repo = event_repo
 
     async def batch_update_papers(
-        self, event_id: int, file: UploadFile = File(...)
-    ) -> list[BatchPapersResponse]:
+            self, event_id: int, file: UploadFile = File(...)
+    ) -> Union[List[BatchPapersResponse], BatchPapersResponse]:
         event = self._event_repo.get_event_by_id(event_id)
 
         if not event:
@@ -39,7 +41,7 @@ class PaperService:
         if not event.merged_papers_filename:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Merged paprs file not found",
+                detail="Merged papers file not found",
             )
 
         if self._paper_repo.count_papers_by_event_id(event_id) == 0:
@@ -58,39 +60,31 @@ class PaperService:
         decoded_content = contents.decode("utf-8").splitlines()
         csv_reader = csv.DictReader(decoded_content, delimiter=";")
 
-        batch_papers: list[BatchPapersResponse] = []
+        errors: List[BatchPapersResponse] = []
+        success_message = "All papers updated successfully"
         for row in csv_reader:
-            self._update_paper_by_csv_row(row, batch_papers)
-
-        return batch_papers
-
-    def _update_paper_by_csv_row(
-        self, row, batch_papers_response: list[BatchPapersResponse]
-    ) -> None:
-        try:
-            self._paper_repo.update_paper(
-                row["id"],
-                PaperToUpdateDTO(
-                    area=row["area"],
-                    title=row["titulo"],
-                    authors=row["autores"],
-                    is_ignored=False if row["ignorar"] == "n" else True,
-                ),
-            )
-
-            batch_papers_response.append(
-                BatchPapersResponse(
-                    id=int(row["id"]),
-                    message="Paper updated successfully",
+            try:
+                self._paper_repo.update_paper(
+                    row["id"],
+                    PaperToUpdateDTO(
+                        area=row["area"],
+                        title=row["titulo"],
+                        authors=row["autores"],
+                        is_ignored=False if row["ignorar"] == "n" else True,
+                    ),
                 )
-            )
-        except Exception as e:
-            batch_papers_response.append(
-                BatchPapersResponse(
-                    id=int(row["id"]),
-                    message=f"Error creating paper: {str(e)}",
+            except Exception as e:
+                errors.append(
+                    BatchPapersResponse(
+                        id=int(row.get("id", 0)),
+                        message=f"Error updating paper: {str(e)}",
+                    )
                 )
-            )
+
+        if errors:
+            return errors
+        else:
+            return [BatchPapersResponse(id=0, message=success_message)]
 
     def get_papers(self, page: int = 1, page_size: int = 10) -> PapersPaginatedResponse:
         papers_data = self._paper_repo.get_papers(page, page_size)
