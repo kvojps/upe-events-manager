@@ -153,6 +153,7 @@ class MergedPapersService:
                 filename,
             )
 
+    #TODO: Change this for update paper
     def _create_paper_from_pdf(
         self, temp_dir: str, filename: str, event_id: int
     ) -> None:
@@ -162,6 +163,7 @@ class MergedPapersService:
 
         if pdf_id.split()[0] not in self._papers_registered:
             self._paper_repo.create_paper(
+                # TODO: Change to PaperToUpdateDTO
                 PaperDTO(
                     pdf_id=pdf_id,
                     area=None,

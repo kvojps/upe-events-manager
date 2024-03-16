@@ -38,3 +38,10 @@ class EventResponse(BaseModel):
                 else None
             ),
         )
+        
+    @classmethod
+    def from_dict(cls, event_dict: dict) -> "EventResponse":
+        return cls(**event_dict)
+
+    def to_dict(self) -> dict:
+        return self.dict()

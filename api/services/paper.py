@@ -39,7 +39,7 @@ class PaperService:
         if not event.merged_papers_filename:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Merged paprs file not found",
+                detail="Merged papers file not found",
             )
 
         if self._paper_repo.count_papers_by_event_id(event_id) == 0:
@@ -63,13 +63,15 @@ class PaperService:
             self._update_paper_by_csv_row(row, batch_papers)
 
         return batch_papers
-
+    
+    #TODO: Change this to create paper
     def _update_paper_by_csv_row(
         self, row, batch_papers_response: list[BatchPapersResponse]
     ) -> None:
         try:
             self._paper_repo.update_paper(
                 row["id"],
+                #TODO: Change this to PaperDTO
                 PaperToUpdateDTO(
                     area=row["area"],
                     title=row["titulo"],

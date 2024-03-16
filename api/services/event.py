@@ -73,3 +73,11 @@ class EventService:
         return EventResponse.from_event(
             self._event_repo.update_anal_filename(event_id, anal_filename)
         )
+        
+    def get_events_by_name(self, name: str) -> list[EventResponse]:
+        events_data = self._event_repo.get_events_by_name(name)
+        events_response = [
+            EventResponse.from_event(event_data) for event_data in events_data
+        ]
+
+        return events_response

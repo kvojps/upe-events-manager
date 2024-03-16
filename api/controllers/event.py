@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from typing import Optional, List
+from fastapi import APIRouter, Depends, FastAPI, File, Query, UploadFile, status, HTTPException
 from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
@@ -9,6 +10,10 @@ from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
 from api.services.merged_papers import MergedPapersService
 from api.services.summary import SummaryService
+from fastapi_filter.contrib.sqlalchemy import Filter
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 
 router = APIRouter()
 
@@ -25,6 +30,43 @@ merged_papers_service = MergedPapersService(
 )
 
 anal_service = AnalService(file_handler_service, event_adapter)
+
+# class EventFilter(Filter):
+#     name: Optional[str] = None
+#     name_ilike: Optional[str] = None
+#     name_like: Optional[str] = None
+#     initial_date: Optional[str] = None
+#     final_date: Optional[str] = None
+    
+#     search: Optional[str] = None
+    
+#     class Constants(Filter.Constants):
+#         model = EventResponse
+#         search_model_fields = ["name", "initial_date", "final_date"]
+        
+# app = FastAPI()
+
+# @router.get("/events-search", response_model=List[EventResponse], status_code=status.HTTP_200_OK)
+# async def get_events(
+#     event_filter: EventFilter = Depends(EventFilter),
+#     db: AsyncSession = Depends(lambda: app.state.db)
+# ) -> List[EventResponse]:
+#     query = select(EventResponse)
+#     query = event_filter.filter(query)
+#     result = await db.execute(query)
+#     return [EventResponse.from_dict(event) for event in result.scalars().all()]
+
+@router.get("/events", response_model=List[EventResponse], status_code=status.HTTP_200_OK)
+def get_events_by_name(
+    name: str = Query(..., description="Event name"),
+    event_service: EventService = Depends(lambda: service),
+):
+    events = event_service.get_events_by_name(name)
+    if not events:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return events
+
+
 
 
 @router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)

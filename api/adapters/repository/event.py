@@ -64,3 +64,6 @@ class EventAdapter(EventRepository):
         self._session.refresh(event)
 
         return event
+    
+    def get_events_by_name(self, name: str) -> list[Event]:
+        return self._session.query(Event).filter(Event.name == name).all()
