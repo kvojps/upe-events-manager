@@ -23,6 +23,7 @@ class SummaryService:
         self._paper_repo = paper_repo
         self._event_repo = event_repo
         self._y_position = 750
+        self.page_iterator = 0
 
     def create_summary_pdf(self, event_id: int) -> SummaryPdfResponse:
         event = self._event_repo.get_event_by_id(event_id)
@@ -62,9 +63,10 @@ class SummaryService:
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
                 self._write_title_on_pdf(summary_pdf, str(paper.title))
-                self._write_authors_on_pdf(summary_pdf, str(paper.authors))
+                self._write_authors_on_pdf(summary_pdf, str(paper.authors), int(paper.total_pages))
 
         summary_pdf.save()
+        self.page_iterator = 0
 
         return SummaryPdfResponse(
             summary_pdf_folder=str(event.s3_folder_name),
@@ -96,7 +98,7 @@ class SummaryService:
             summary_pdf.drawString(165, self._y_position, line)
             self._y_position -= 20
 
-    def _write_authors_on_pdf(self, summary_pdf: canvas.Canvas, authors: str):
+    def _write_authors_on_pdf(self, summary_pdf: canvas.Canvas, authors: str, pages: int):
         summary_pdf.setFont("Helvetica-Bold", 10)
         authors_lines = simpleSplit(
             f"Autores: {authors}",
@@ -105,9 +107,14 @@ class SummaryService:
             400,
         )
         for line in authors_lines:
+            pagination_text = str(self.page_iterator + 1)
             if self._y_position < 50:
                 summary_pdf.showPage()
                 self._y_position = 750
                 summary_pdf.setFont("Helvetica-Bold", 10)
             summary_pdf.drawString(165, self._y_position, line)
+
+            if (len(authors_lines) - authors_lines.index(line)) < 2:
+                summary_pdf.drawRightString(600, self._y_position, pagination_text)
+                self.page_iterator += pages
             self._y_position -= 20
