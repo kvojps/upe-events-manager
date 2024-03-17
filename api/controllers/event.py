@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Query, UploadFile, status, FastAPI, HTTPException
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
@@ -9,10 +9,7 @@ from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
 from api.services.merged_papers import MergedPapersService
 from api.services.summary import SummaryService
-from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
 
-app = FastAPI()
 router = APIRouter()
 
 event_adapter = EventAdapter()
@@ -29,30 +26,12 @@ merged_papers_service = MergedPapersService(
 
 anal_service = AnalService(file_handler_service, event_adapter)
 
-@app.exception_handler(IntegrityError)
-async def integrity_error_handler(request, exc):
-    if isinstance(exc.orig, UniqueViolation):
-        error_message = "Um evento já cadastrado possui o mesmo nome"
-        return JSONResponse(status_code=409, content={"error": error_message})
-    else:
-        raise HTTPException(status_code=500, detail="Internal Server Errror")
 
-@router.post("", responses={409: {"description": "Conflito de valores", "model": integrity_error_handler}},
-response_model=EventResponse)
+@router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
 def create_event(
     event_data: EventDTO, event_service: EventService = Depends(lambda: service)
 ):
-    try:
-        events = event_service.get_events()
-        return event_service.create_event(event_data)
-    except IntegrityError as e:
-        if isinstance(e.orig, UniqueViolation):
-            error_message = event_data.name + " já é um nome cadastrado."
-            # Return a 409 HTTP response with a JSON payload containing the error message
-            raise HTTPException(status_code=409, detail=error_message)
-        else:
-            # If it's not a unique violation, raise a generic HTTP exception
-            raise HTTPException(status_code=500, detail="Internal server error")
+    return event_service.create_event(event_data)
 
 
 @router.get("", response_model=EventsPaginatedResponse, status_code=status.HTTP_200_OK)
