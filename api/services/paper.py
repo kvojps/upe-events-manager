@@ -8,9 +8,14 @@ from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 
 
-class BatchPapersResponse(BaseModel):
+class BatchPapersErrorResponse(BaseModel):
     id: int
     message: str
+
+
+class BatchPapersResponse(BaseModel):
+    detail: str
+    errors: list[BatchPapersErrorResponse]
 
 
 class PapersPaginatedResponse(BaseModel):
@@ -27,7 +32,7 @@ class PaperService:
 
     async def batch_update_papers(
         self, event_id: int, file: UploadFile = File(...)
-    ) -> list[BatchPapersResponse]:
+    ) -> BatchPapersResponse:
         event = self._event_repo.get_event_by_id(event_id)
 
         if not event:
@@ -58,14 +63,16 @@ class PaperService:
         decoded_content = contents.decode("utf-8").splitlines()
         csv_reader = csv.DictReader(decoded_content, delimiter=";")
 
-        batch_papers: list[BatchPapersResponse] = []
+        batch_papers_errors: list[BatchPapersErrorResponse] = []
         for row in csv_reader:
-            self._update_paper_by_csv_row(row, batch_papers)
+            self._update_paper_by_csv_row(row, batch_papers_errors)
 
-        return batch_papers
+        return BatchPapersResponse(
+            detail="Batch papers finished", errors=batch_papers_errors
+        )
 
     def _update_paper_by_csv_row(
-        self, row, batch_papers_response: list[BatchPapersResponse]
+        self, row, batch_papers_response: list[BatchPapersErrorResponse]
     ) -> None:
         try:
             self._paper_repo.update_paper(
@@ -77,16 +84,9 @@ class PaperService:
                     is_ignored=False if row["ignorar"] == "n" else True,
                 ),
             )
-
-            batch_papers_response.append(
-                BatchPapersResponse(
-                    id=int(row["id"]),
-                    message="Paper updated successfully",
-                )
-            )
         except Exception as e:
             batch_papers_response.append(
-                BatchPapersResponse(
+                BatchPapersErrorResponse(
                     id=int(row["id"]),
                     message=f"Error creating paper: {str(e)}",
                 )
