@@ -5,6 +5,7 @@ from api.models.dto.user import AuthDTO, UserDTO
 from api.models.responses.user import AuthResponse, UserResponse
 from api.security import is_super_user
 from api.services.auth import AuthService
+from api.utils.doc_responses import ExceptionResponse
 
 router = APIRouter()
 
@@ -12,7 +13,14 @@ adapter = UserAdapter()
 service = AuthService(adapter)
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    responses={
+        401: {"model": ExceptionResponse},
+        403: {"model": ExceptionResponse},
+    },
+)
 def create_user(
     user_request: UserDTO,
     service: AuthService = Depends(lambda: service),

@@ -6,6 +6,7 @@ from api.services.paper import (
     PaperService,
     PapersPaginatedResponse,
 )
+from api.utils.doc_responses import ExceptionResponse
 
 router = APIRouter()
 
@@ -18,6 +19,11 @@ service = PaperService(adapter, event_adapter)
     "/upload_csv/events/{event_id}",
     response_model=list[BatchPapersResponse],
     status_code=status.HTTP_207_MULTI_STATUS,
+    responses={
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+        415: {"model": ExceptionResponse},
+    },
 )
 async def batch_update_papers(
     event_id: int,

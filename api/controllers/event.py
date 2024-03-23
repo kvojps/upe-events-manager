@@ -9,6 +9,7 @@ from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
 from api.services.merged_papers import MergedPapersService
 from api.services.summary import SummaryService
+from api.utils.doc_responses import ExceptionResponse
 
 router = APIRouter()
 
@@ -47,6 +48,12 @@ def get_events(
     "/{event_id}/summary",
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
+    responses={
+        400: {"model": ExceptionResponse},
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+        503: {"model": ExceptionResponse},
+    },
 )
 def update_summary_filename(
     event_id: int,
@@ -70,6 +77,14 @@ def update_summary_filename(
     "/{event_id}/merged-papers",
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
+    responses={
+        400: {"model": ExceptionResponse},
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+        409: {"model": ExceptionResponse},
+        415: {"model": ExceptionResponse},
+        503: {"model": ExceptionResponse},
+    },
 )
 async def update_merged_papers_filename(
     event_id: int,
@@ -88,6 +103,12 @@ async def update_merged_papers_filename(
     "/{event_id}/anal",
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
+    responses={
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+        415: {"model": ExceptionResponse},
+        503: {"model": ExceptionResponse},
+    },
 )
 async def update_anal_filename(
     event_id: int,
