@@ -24,3 +24,10 @@ class EventDTO(BaseModel):
             raise ValueError("The initial data must be in the format DD-MM-YYYY")
 
         return value
+
+    @validator("final_date")
+    def validate_final_date_greater_than_initial_date(cls, value: str, values):
+        if "initial_date" in values and value < values["initial_date"]:
+            raise ValueError("The final date must be greater than the initial date")
+
+        return value
