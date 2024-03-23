@@ -21,6 +21,11 @@ class EventService:
         self._event_repo = event_repo
 
     def create_event(self, event: EventDTO) -> EventResponse:
+        if self._event_repo.get_event_by_name(event.name):
+            raise HTTPException(
+                status_code=409, detail=f"Event with name {event.name} already exists"
+            )
+
         event_data = self._event_repo.create_event(event)
 
         return EventResponse.from_event(event_data)

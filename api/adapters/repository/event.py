@@ -36,6 +36,9 @@ class EventAdapter(EventRepository):
     def get_event_by_id(self, event_id: int) -> Event:
         return self._session.query(Event).filter(Event.id == event_id).first()
 
+    def get_event_by_name(self, event_name: str) -> Event:
+        return self._session.query(Event).filter(Event.name == event_name).first()
+
     def count_events(self) -> int:
         return self._session.query(Event).count()
 
@@ -59,7 +62,7 @@ class EventAdapter(EventRepository):
 
     def update_anal_filename(self, event_id: int, anal_filename: str) -> Event:
         event = self.get_event_by_id(event_id)
-        event.anal_filename = anal_filename # type: ignore
+        event.anal_filename = anal_filename  # type: ignore
         self._session.commit()
         self._session.refresh(event)
 

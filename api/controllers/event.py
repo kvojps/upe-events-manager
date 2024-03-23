@@ -28,7 +28,14 @@ merged_papers_service = MergedPapersService(
 anal_service = AnalService(file_handler_service, event_adapter)
 
 
-@router.post("", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=EventResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        409: {"model": ExceptionResponse},
+    },
+)
 def create_event(
     event_data: EventDTO, event_service: EventService = Depends(lambda: service)
 ):

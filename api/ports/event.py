@@ -14,6 +14,9 @@ class EventRepository(ABC):
     def get_event_by_id(self, event_id: int) -> Event: ...
 
     @abstractmethod
+    def get_event_by_name(self, event_name: str) -> Event: ...
+
+    @abstractmethod
     def count_events(self) -> int: ...
 
     @abstractmethod
