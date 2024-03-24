@@ -31,7 +31,7 @@ class MergedPapersService:
         if not event:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Event with id {event_id} not found",
+                detail="Event not found",
             )
 
         if event.merged_papers_filename:
@@ -40,10 +40,10 @@ class MergedPapersService:
                 detail="Papers already merged for this event",
             )
 
-        if self._paper_repo.count_papers_by_event_id(event_id) > 0:
+        if self._paper_repo.count_papers_by_event_id(event_id) == 0:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Papers already created for this event",
+                detail="Papers not found for this event",
             )
 
         s3_folder_name = str(event.s3_folder_name)
@@ -68,23 +68,25 @@ class MergedPapersService:
         self, temp_dir: str, file: UploadFile, event_id: int
     ) -> PdfWriter:
         zip_file_path = await self._add_zip_file_to_temp_dir(temp_dir, file)
-
         pdf_writer = PdfWriter()
         with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             current_file = 1
             start_time = time.time()
-            for filename in zip_ref.namelist():
-                if filename.lower().endswith(".pdf"):
+
+            event_areas = self._paper_repo.get_areas_by_event_id(event_id)
+            for area in event_areas:
+                papers = self._paper_repo.get_papers_by_area(area)
+                for paper in papers:
                     self._proccess_pdf_file(
                         zip_ref,
                         pdf_writer,
                         temp_dir,
-                        filename,
+                        f"{paper.pdf_id}.pdf",
                         event_id,
                         current_file,
                         start_time,
                     )
-                current_file += 1
+                    current_file += 1
 
         self._papers_registered = []
 

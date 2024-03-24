@@ -46,16 +46,10 @@ class PaperService:
                 detail="Event not found",
             )
 
-        if not event.merged_papers_filename:
+        if self._paper_repo.count_papers_by_event_id(event_id) > 0:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Merged paprs file not found",
-            )
-
-        if self._paper_repo.count_papers_by_event_id(event_id) == 0:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Papers not found for this event",
+                detail="Papers already created for this event",
             )
 
         if not file.filename or not file.filename.endswith(".csv"):
