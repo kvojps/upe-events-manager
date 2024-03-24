@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from api.models.dto.event import EventDTO
 from api.models.event import Event
+from typing import Optional
 
 
 class EventRepository(ABC):
@@ -8,7 +9,13 @@ class EventRepository(ABC):
     def create_event(self, event: EventDTO) -> Event: ...
 
     @abstractmethod
-    def get_events(self, page: int = 1, page_size: int = 10) -> list[Event]: ...
+    def get_events(
+        self,
+        initial_date: Optional[str],
+        final_date: Optional[str],
+        page: int = 1,
+        page_size: int = 10,
+    ) -> list[Event]: ...
 
     @abstractmethod
     def get_event_by_id(self, event_id: int) -> Event: ...
@@ -17,7 +24,11 @@ class EventRepository(ABC):
     def get_event_by_name(self, event_name: str) -> Event: ...
 
     @abstractmethod
-    def count_events(self) -> int: ...
+    def count_events(
+        self,
+        initial_date: Optional[str],
+        final_date: Optional[str],
+    ) -> int: ...
 
     @abstractmethod
     def update_summary_filename(

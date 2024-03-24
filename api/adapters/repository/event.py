@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from api.config.postgres import SessionLocal
 from api.models.dto.event import EventDTO
 from api.models.event import Event
@@ -25,9 +26,19 @@ class EventAdapter(EventRepository):
 
         return event_data
 
-    def get_events(self, page: int = 1, page_size: int = 10) -> list[Event]:
+    def get_events(
+        self,
+        initial_date: Optional[str] = None,
+        final_date: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> list[Event]:
         return (
             self._session.query(Event)
+            .filter(
+                Event.initial_date >= initial_date if initial_date else True,
+                Event.final_date <= final_date if final_date else True,
+            )
             .limit(page_size)
             .offset((page - 1) * page_size)
             .all()
@@ -39,8 +50,17 @@ class EventAdapter(EventRepository):
     def get_event_by_name(self, event_name: str) -> Event:
         return self._session.query(Event).filter(Event.name == event_name).first()
 
-    def count_events(self) -> int:
-        return self._session.query(Event).count()
+    def count_events(
+        self, initial_date: Optional[str] = None, final_date: Optional[str] = None
+    ) -> int:
+        return (
+            self._session.query(Event)
+            .filter(
+                Event.initial_date >= initial_date if initial_date else True,
+                Event.final_date <= final_date if final_date else True,
+            )
+            .count()
+        )
 
     def update_summary_filename(self, event_id: int, summary_filename: str) -> Event:
         event = self.get_event_by_id(event_id)

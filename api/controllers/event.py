@@ -46,9 +46,11 @@ def create_event(
 def get_events(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
+    initial_date: str = Query(None),
+    final_date: str = Query(None),
     event_service: EventService = Depends(lambda: service),
 ):
-    return event_service.get_events(page, page_size)
+    return event_service.get_events(initial_date, final_date, page, page_size)
 
 
 @router.patch(
