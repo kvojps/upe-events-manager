@@ -37,8 +37,9 @@ async def batch_update_papers(
 def get_papers(
     search: str = Query(None),
     area: str = Query(None),
+    event_id: int = Query(None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
     paper_service: PaperService = Depends(lambda: service),
 ):
-    return paper_service.get_papers(search, area, page, page_size)
+    return paper_service.get_papers(search, area, event_id, page, page_size)

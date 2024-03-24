@@ -1,9 +1,9 @@
 from typing import Optional
+from sqlalchemy import or_
 from api.config.postgres import SessionLocal
 from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
 from api.models.paper import Paper
 from api.ports.paper import PaperRepository
-from sqlalchemy import or_
 
 
 class PaperAdapter(PaperRepository):
@@ -31,6 +31,7 @@ class PaperAdapter(PaperRepository):
         self,
         search: Optional[str] = None,
         area: Optional[str] = None,
+        event_id: Optional[int] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> list[Paper]:
@@ -47,6 +48,7 @@ class PaperAdapter(PaperRepository):
                     else True
                 ),
                 Paper.area.ilike(area) if area else True,
+                Paper.event_id == event_id if event_id else True,
             )
             .order_by(Paper.title)
             .limit(page_size)
@@ -71,7 +73,10 @@ class PaperAdapter(PaperRepository):
         return self._session.query(Paper).first()
 
     def count_papers(
-        self, search: Optional[str] = None, area: Optional[str] = None
+        self,
+        search: Optional[str] = None,
+        area: Optional[str] = None,
+        event_id: Optional[int] = None,
     ) -> int:
         return (
             self._session.query(Paper)
@@ -86,6 +91,7 @@ class PaperAdapter(PaperRepository):
                     else True
                 ),
                 Paper.area.ilike(area) if area else True,
+                Paper.event_id == event_id if event_id else True,
             )
             .count()
         )
