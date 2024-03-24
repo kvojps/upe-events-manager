@@ -30,6 +30,7 @@ class EventAdapter(EventRepository):
         self,
         initial_date: Optional[str] = None,
         final_date: Optional[str] = None,
+        name: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> list[Event]:
@@ -38,6 +39,7 @@ class EventAdapter(EventRepository):
             .filter(
                 Event.initial_date >= initial_date if initial_date else True,
                 Event.final_date <= final_date if final_date else True,
+                Event.name.ilike(f"%{name}%") if name else True,
             )
             .limit(page_size)
             .offset((page - 1) * page_size)
@@ -51,13 +53,17 @@ class EventAdapter(EventRepository):
         return self._session.query(Event).filter(Event.name == event_name).first()
 
     def count_events(
-        self, initial_date: Optional[str] = None, final_date: Optional[str] = None
+        self,
+        initial_date: Optional[str] = None,
+        final_date: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> int:
         return (
             self._session.query(Event)
             .filter(
                 Event.initial_date >= initial_date if initial_date else True,
                 Event.final_date <= final_date if final_date else True,
+                Event.name.like(f"%{name}%") if name else True,
             )
             .count()
         )

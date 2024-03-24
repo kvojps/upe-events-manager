@@ -13,6 +13,7 @@ class EventRepository(ABC):
         self,
         initial_date: Optional[str],
         final_date: Optional[str],
+        name: Optional[str],
         page: int = 1,
         page_size: int = 10,
     ) -> list[Event]: ...
@@ -28,6 +29,7 @@ class EventRepository(ABC):
         self,
         initial_date: Optional[str],
         final_date: Optional[str],
+        name: Optional[str],
     ) -> int: ...
 
     @abstractmethod

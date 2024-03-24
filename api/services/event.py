@@ -36,6 +36,7 @@ class EventService:
         self,
         initial_date: Optional[str],
         final_date: Optional[str],
+        name: Optional[str],
         page: int = 1,
         page_size: int = 10,
     ) -> EventsPaginatedResponse:
@@ -45,7 +46,7 @@ class EventService:
             str_to_date(final_date)
 
         events_data = self._event_repo.get_events(
-            initial_date, final_date, page, page_size
+            initial_date, final_date, name, page, page_size
         )
         events_response = [
             EventResponse.from_event(event_data) for event_data in events_data
@@ -53,9 +54,9 @@ class EventService:
 
         return EventsPaginatedResponse(
             events=events_response,
-            total_events=self._event_repo.count_events(initial_date, final_date),
+            total_events=self._event_repo.count_events(initial_date, final_date, name),
             total_pages=ceil(
-                self._event_repo.count_events(initial_date, final_date) / page_size
+                self._event_repo.count_events(initial_date, final_date, name) / page_size
             ),
             current_page=page,
         )
