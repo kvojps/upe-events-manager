@@ -36,6 +36,9 @@ class PaperRepository(ABC):
     def count_papers_by_event_id(self, event_id: int) -> int: ...
 
     @abstractmethod
+    def get_areas(self) -> list[str]: ...
+
+    @abstractmethod
     def get_areas_by_event_id(self, event_id: int) -> list[str]: ...
 
     @abstractmethod

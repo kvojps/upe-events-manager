@@ -5,6 +5,7 @@ from api.services.paper import (
     BatchPapersResponse,
     PaperService,
     PapersPaginatedResponse,
+    AreasResponse,
 )
 from api.utils.doc_responses import ExceptionResponse
 
@@ -43,3 +44,8 @@ def get_papers(
     paper_service: PaperService = Depends(lambda: service),
 ):
     return paper_service.get_papers(search, area, event_id, page, page_size)
+
+
+@router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
+def get_areas(paper_service: PaperService = Depends(lambda: service)):
+    return paper_service.get_areas()

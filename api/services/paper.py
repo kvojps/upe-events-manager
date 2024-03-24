@@ -26,6 +26,10 @@ class PapersPaginatedResponse(BaseModel):
     current_page: int
 
 
+class AreasResponse(BaseModel):
+    areas: list[str]
+
+
 class PaperService:
     def __init__(self, paper_repo: PaperRepository, event_repo: EventRepository):
         self._paper_repo = paper_repo
@@ -101,7 +105,9 @@ class PaperService:
         page: int = 1,
         page_size: int = 10,
     ) -> PapersPaginatedResponse:
-        papers_data = self._paper_repo.get_papers(search, area, event_id, page, page_size)
+        papers_data = self._paper_repo.get_papers(
+            search, area, event_id, page, page_size
+        )
         papers_response = [
             PaperResponse.from_paper(paper_data) for paper_data in papers_data
         ]
@@ -109,6 +115,11 @@ class PaperService:
         return PapersPaginatedResponse(
             papers=papers_response,
             total_papers=self._paper_repo.count_papers(search, area, event_id),
-            total_pages=ceil(self._paper_repo.count_papers(search, area, event_id) / page_size),
+            total_pages=ceil(
+                self._paper_repo.count_papers(search, area, event_id) / page_size
+            ),
             current_page=page,
         )
+
+    def get_areas(self) -> AreasResponse:
+        return AreasResponse(areas=self._paper_repo.get_areas())
