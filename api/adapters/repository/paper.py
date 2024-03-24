@@ -30,19 +30,23 @@ class PaperAdapter(PaperRepository):
     def get_papers(
         self,
         search: Optional[str] = None,
+        area: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> list[Paper]:
         papers = (
             self._session.query(Paper)
             .filter(
-                or_(
-                    Paper.title.ilike(f"%{search}%"),
-                    Paper.authors.ilike(f"%{search}%"),
-                    Paper.pdf_id == search,
-                )
-                if search
-                else True
+                (
+                    or_(
+                        Paper.title.ilike(f"%{search}%"),
+                        Paper.authors.ilike(f"%{search}%"),
+                        Paper.pdf_id == search,
+                    )
+                    if search
+                    else True
+                ),
+                Paper.area.ilike(area) if area else True,
             )
             .order_by(Paper.title)
             .limit(page_size)
@@ -66,17 +70,22 @@ class PaperAdapter(PaperRepository):
     def get_first_paper(self) -> Paper:
         return self._session.query(Paper).first()
 
-    def count_papers(self, search: Optional[str] = None) -> int:
+    def count_papers(
+        self, search: Optional[str] = None, area: Optional[str] = None
+    ) -> int:
         return (
             self._session.query(Paper)
             .filter(
-                or_(
-                    Paper.title.ilike(f"%{search}%"),
-                    Paper.authors.ilike(f"%{search}%"),
-                    Paper.pdf_id == search,
-                )
-                if search
-                else True
+                (
+                    or_(
+                        Paper.title.ilike(f"%{search}%"),
+                        Paper.authors.ilike(f"%{search}%"),
+                        Paper.pdf_id == search,
+                    )
+                    if search
+                    else True
+                ),
+                Paper.area.ilike(area) if area else True,
             )
             .count()
         )

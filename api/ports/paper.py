@@ -12,6 +12,7 @@ class PaperRepository(ABC):
     def get_papers(
         self,
         search: Optional[str],
+        area: Optional[str],
         page: int = 1,
         page_size: int = 10,
     ) -> list[Paper]: ...
@@ -26,7 +27,7 @@ class PaperRepository(ABC):
     def get_first_paper(self) -> Paper: ...
 
     @abstractmethod
-    def count_papers(self, search: Optional[str]) -> int: ...
+    def count_papers(self, search: Optional[str], area: Optional[str]) -> int: ...
 
     @abstractmethod
     def count_papers_by_event_id(self, event_id: int) -> int: ...

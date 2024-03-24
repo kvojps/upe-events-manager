@@ -94,16 +94,20 @@ class PaperService:
             )
 
     def get_papers(
-        self, search: Optional[str], page: int = 1, page_size: int = 10
+        self,
+        search: Optional[str],
+        area: Optional[str],
+        page: int = 1,
+        page_size: int = 10,
     ) -> PapersPaginatedResponse:
-        papers_data = self._paper_repo.get_papers(search, page, page_size)
+        papers_data = self._paper_repo.get_papers(search, area, page, page_size)
         papers_response = [
             PaperResponse.from_paper(paper_data) for paper_data in papers_data
         ]
 
         return PapersPaginatedResponse(
             papers=papers_response,
-            total_papers=self._paper_repo.count_papers(search),
-            total_pages=ceil(self._paper_repo.count_papers(search) / page_size),
+            total_papers=self._paper_repo.count_papers(search, area),
+            total_pages=ceil(self._paper_repo.count_papers(search, area) / page_size),
             current_page=page,
         )
