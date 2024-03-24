@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
 from api.models.paper import Paper
 
@@ -8,7 +9,12 @@ class PaperRepository(ABC):
     def create_paper(self, paper: PaperDTO) -> Paper: ...
 
     @abstractmethod
-    def get_papers(self, page: int = 1, page_size: int = 10) -> list[Paper]: ...
+    def get_papers(
+        self,
+        search: Optional[str],
+        page: int = 1,
+        page_size: int = 10,
+    ) -> list[Paper]: ...
 
     @abstractmethod
     def get_papers_by_area(self, area: str) -> list[Paper]: ...
@@ -20,7 +26,7 @@ class PaperRepository(ABC):
     def get_first_paper(self) -> Paper: ...
 
     @abstractmethod
-    def count_papers(self) -> int: ...
+    def count_papers(self, search: Optional[str]) -> int: ...
 
     @abstractmethod
     def count_papers_by_event_id(self, event_id: int) -> int: ...

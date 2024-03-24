@@ -1,7 +1,9 @@
+from typing import Optional
 from api.config.postgres import SessionLocal
 from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
 from api.models.paper import Paper
 from api.ports.paper import PaperRepository
+from sqlalchemy import or_
 
 
 class PaperAdapter(PaperRepository):
@@ -25,9 +27,23 @@ class PaperAdapter(PaperRepository):
 
         return paper_data
 
-    def get_papers(self, page: int = 1, page_size: int = 10) -> list[Paper]:
+    def get_papers(
+        self,
+        search: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> list[Paper]:
         papers = (
             self._session.query(Paper)
+            .filter(
+                or_(
+                    Paper.title.ilike(f"%{search}%"),
+                    Paper.authors.ilike(f"%{search}%"),
+                    Paper.pdf_id == search,
+                )
+                if search
+                else True
+            )
             .order_by(Paper.title)
             .limit(page_size)
             .offset((page - 1) * page_size)
@@ -50,8 +66,20 @@ class PaperAdapter(PaperRepository):
     def get_first_paper(self) -> Paper:
         return self._session.query(Paper).first()
 
-    def count_papers(self) -> int:
-        return self._session.query(Paper).count()
+    def count_papers(self, search: Optional[str] = None) -> int:
+        return (
+            self._session.query(Paper)
+            .filter(
+                or_(
+                    Paper.title.ilike(f"%{search}%"),
+                    Paper.authors.ilike(f"%{search}%"),
+                    Paper.pdf_id == search,
+                )
+                if search
+                else True
+            )
+            .count()
+        )
 
     def count_papers_by_event_id(self, event_id: int) -> int:
         return self._session.query(Paper).filter(Paper.event_id == event_id).count()

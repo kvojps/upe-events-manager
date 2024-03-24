@@ -35,8 +35,9 @@ async def batch_update_papers(
 
 @router.get("", response_model=PapersPaginatedResponse, status_code=status.HTTP_200_OK)
 def get_papers(
+    search: str = Query(None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
     paper_service: PaperService = Depends(lambda: service),
 ):
-    return paper_service.get_papers(page, page_size)
+    return paper_service.get_papers(search, page, page_size)

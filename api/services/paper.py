@@ -1,5 +1,6 @@
 import csv
 from math import ceil
+from typing import Optional
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from api.models.dto.paper import PaperToUpdateDTO
@@ -92,15 +93,17 @@ class PaperService:
                 )
             )
 
-    def get_papers(self, page: int = 1, page_size: int = 10) -> PapersPaginatedResponse:
-        papers_data = self._paper_repo.get_papers(page, page_size)
+    def get_papers(
+        self, search: Optional[str], page: int = 1, page_size: int = 10
+    ) -> PapersPaginatedResponse:
+        papers_data = self._paper_repo.get_papers(search, page, page_size)
         papers_response = [
             PaperResponse.from_paper(paper_data) for paper_data in papers_data
         ]
 
         return PapersPaginatedResponse(
             papers=papers_response,
-            total_papers=self._paper_repo.count_papers(),
-            total_pages=ceil(self._paper_repo.count_papers() / page_size),
+            total_papers=self._paper_repo.count_papers(search),
+            total_pages=ceil(self._paper_repo.count_papers(search) / page_size),
             current_page=page,
         )
