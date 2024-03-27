@@ -5,7 +5,6 @@ import time
 import zipfile
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
-from api.models.dto.paper import PaperDTO
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 from api.services.file_handler import FileHandlerService, PutObjectResponse
@@ -82,7 +81,6 @@ class MergedPapersService:
                         pdf_writer,
                         temp_dir,
                         f"{paper.pdf_id}.pdf",
-                        event_id,
                         current_file,
                         start_time,
                     )
@@ -117,30 +115,35 @@ class MergedPapersService:
         pdf_writer: PdfWriter,
         temp_dir: str,
         filename: str,
-        event_id: int,
         current_file: int,
         start_time: float,
     ) -> None:
-        zip_ref.extract(filename, path=temp_dir)
+        zip_ref.extract(f"{zip_ref.namelist()[0]}{filename}", path=temp_dir)
 
-        self._add_paper_pages_to_pdf_writer(pdf_writer, temp_dir, filename)
+        self._add_paper_pages_to_pdf_writer(zip_ref, pdf_writer, temp_dir, filename)
 
         # self._upload_paper_to_s3_event_folder(
         #     zip_ref, s3_folder_name, filename
         # )
 
-        self._create_paper_from_pdf(temp_dir, filename, event_id)
+        self._update_paper_from_pdf(zip_ref, temp_dir, filename)
         ProgressChecker.get_progress(
-            "Progresso do pré-cadastro",
+            "Progresso do cadastro",
             current_file,
             len(zip_ref.namelist()),
             start_time,
         )
 
     def _add_paper_pages_to_pdf_writer(
-        self, pdf_writer: PdfWriter, temp_dir: str, filename: str
+        self,
+        zip_ref: zipfile.ZipFile,
+        pdf_writer: PdfWriter,
+        temp_dir: str,
+        filename: str,
     ):
-        pdf_reader = PdfReader(os.path.join(temp_dir, filename))
+        pdf_reader = PdfReader(
+            os.path.join(temp_dir, f"{zip_ref.namelist()[0]}{filename}")
+        )
         for page_num in range(0, len(pdf_reader.pages)):
             page_obj = pdf_reader.pages[page_num]
             pdf_writer.add_page(page_obj)
@@ -155,25 +158,17 @@ class MergedPapersService:
                 filename,
             )
 
-    def _create_paper_from_pdf(
-        self, temp_dir: str, filename: str, event_id: int
+    def _update_paper_from_pdf(
+        self, zip_ref: zipfile.ZipFile, temp_dir: str, filename: str
     ) -> None:
         pdf_id = os.path.splitext(os.path.basename(filename))[0]
-        pdf_reader = PdfReader(os.path.join(temp_dir, filename))
+        pdf_reader = PdfReader(
+            os.path.join(temp_dir, f"{zip_ref.namelist()[0]}{filename}")
+        )
         total_pages = len(pdf_reader.pages)
 
         if pdf_id.split()[0] not in self._papers_registered:
-            self._paper_repo.create_paper(
-                PaperDTO(
-                    pdf_id=pdf_id,
-                    area=None,
-                    title=None,
-                    authors=None,
-                    is_ignored=None,
-                    total_pages=total_pages,
-                    event_id=event_id,
-                )
-            )
+            self._paper_repo.update_paper_pages(pdf_id, total_pages)
             self._papers_registered.append(pdf_id)
 
     def _upload_merged_papers_to_s3_event_folder(
