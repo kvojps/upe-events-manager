@@ -93,7 +93,7 @@ def update_summary_filename(
         404: {"model": ExceptionResponse},
         409: {"model": ExceptionResponse},
         415: {"model": ExceptionResponse},
-        503: {"model": ExceptionResponse},
+        500: {"model": ExceptionResponse},
     },
 )
 async def update_merged_papers_filename(
