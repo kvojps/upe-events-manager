@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from api.models.paper import Paper
 
@@ -10,7 +11,7 @@ class PaperResponse(BaseModel):
     title: str
     authors: str
     is_ignored: bool
-    total_pages: int
+    total_pages: Optional[int]
     event_id: int
 
     @classmethod
@@ -23,6 +24,6 @@ class PaperResponse(BaseModel):
             title=str(paper.title),
             authors=str(paper.authors),
             is_ignored=bool(paper.is_ignored),
-            total_pages=int(paper.total_pages),
+            total_pages=int(paper.total_pages) if paper.total_pages else None,
             event_id=int(paper.event_id),
         )

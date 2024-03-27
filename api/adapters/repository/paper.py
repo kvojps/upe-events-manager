@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlalchemy import or_
 from api.config.postgres import SessionLocal
-from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
+from api.models.dto.paper import PaperDTO
 from api.models.paper import Paper
 from api.ports.paper import PaperRepository
 
@@ -119,13 +119,10 @@ class PaperAdapter(PaperRepository):
 
         return [area[0] for area in areas]
 
-    def update_paper(self, pdf_id: int, paper: PaperToUpdateDTO) -> Paper:
+    def update_paper_pages(self, pdf_id: str, pages: int) -> Paper:
         paper_data = self._session.query(Paper).filter(Paper.pdf_id == pdf_id).first()
 
-        paper_data.area = paper.area
-        paper_data.title = paper.title
-        paper_data.authors = paper.authors
-        paper_data.is_ignored = paper.is_ignored
+        paper_data.total_pages = pages
 
         self._session.commit()
         self._session.refresh(paper_data)

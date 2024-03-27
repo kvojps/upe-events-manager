@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from api.models.dto.paper import PaperDTO, PaperToUpdateDTO
+from api.models.dto.paper import PaperDTO
 from api.models.paper import Paper
 
 
@@ -42,4 +42,4 @@ class PaperRepository(ABC):
     def get_areas_by_event_id(self, event_id: int) -> list[str]: ...
 
     @abstractmethod
-    def update_paper(self, pdf_id: int, paper: PaperToUpdateDTO) -> Paper: ...
+    def update_paper_pages(self, pdf_id: str, pages: int) -> Paper: ...
