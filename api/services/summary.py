@@ -1,9 +1,6 @@
 from io import BytesIO
 from fastapi import HTTPException, status
 from pydantic import BaseModel
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.utils import simpleSplit
-from reportlab.pdfgen import canvas
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 
