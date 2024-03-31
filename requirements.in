@@ -14,3 +14,4 @@ python-jose
 types-python-jose
 passlib
 types-passlib
+Jinja2
