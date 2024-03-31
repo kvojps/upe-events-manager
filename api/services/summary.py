@@ -52,62 +52,82 @@ class SummaryService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Papers cannot have empty fields to generate the summary",
             )
-
+        
         buffer = BytesIO()
-        summary_pdf = canvas.Canvas(buffer, pagesize=letter)
-        summary_pdf.setFont("Helvetica-Bold", 12)
 
+        content = ""
+        pages = 0
         for area in event_areas:
-            self._write_area_on_pdf(summary_pdf, area)
+            content += f"""
+                <h1>{area}</h1>
+            """
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                self._write_title_on_pdf(summary_pdf, str(paper.title))
-                self._write_authors_on_pdf(summary_pdf, str(paper.authors))
+                pages += 1 # TODO: Implement total pages
+                content += f"""
+                    <p><strong>Título:</strong>{str(paper.title)} - {pages}</p>
+                    <p><strong>Autores:</strong>{str(paper.authors)}</p>
+                    <div class="separator"></div>
+                """
 
-        summary_pdf.save()
+        template_html = """
+            <!DOCTYPE html>
+            <html lang="en">
+
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Summary</title>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+                <style>
+                    body {
+                        font-family: 'Roboto', sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f7f7f7;
+                    }
+
+                    .container {
+                        max-width: 800px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        background-color: #fff;
+                        border-radius: 5px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+
+                    h1 {
+                        font-size: 24px;
+                        color: #333;
+                        margin-bottom: 30px;
+                    }
+
+                    p {
+                        font-size: 16px;
+                        color: #555;
+                    }
+
+                    .separator {
+                        border-top: 1px solid #ccc;
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+                    }
+                </style>
+            </head>""" + (
+            f"""
+            <body>
+                <div class="container">
+                    {content}
+                </div>
+            </body>
+
+            </html> """
+            )
+
+        buffer.write(template_html.encode("UTF-8"))
 
         return SummaryPdfResponse(
             summary_pdf_folder=str(event.s3_folder_name),
-            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.pdf",
+            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.html",
             summary_pdf=buffer.getvalue(),
         )
-
-    def _write_area_on_pdf(self, summary_pdf: canvas.Canvas, area: str):
-        summary_pdf.setFont("Helvetica-Bold", 16)
-        if self._y_position < 60:
-            summary_pdf.showPage()
-            self._y_position = 750
-        summary_pdf.drawString(100, self._y_position, f"Área: {area}")
-        self._y_position -= 20
-
-    def _write_title_on_pdf(self, summary_pdf: canvas.Canvas, title: str):
-        summary_pdf.setFont("Helvetica-Bold", 12)
-        title_lines = simpleSplit(
-            "* " + str(title).capitalize(),
-            summary_pdf._fontname,
-            summary_pdf._fontsize,
-            400,
-        )
-        for line in title_lines:
-            if self._y_position < 50:
-                summary_pdf.showPage()
-                self._y_position = 750
-                summary_pdf.setFont("Helvetica-Bold", 12)
-            summary_pdf.drawString(165, self._y_position, line)
-            self._y_position -= 20
-
-    def _write_authors_on_pdf(self, summary_pdf: canvas.Canvas, authors: str):
-        summary_pdf.setFont("Helvetica-Bold", 10)
-        authors_lines = simpleSplit(
-            f"Autores: {authors}",
-            summary_pdf._fontname,
-            summary_pdf._fontsize,
-            400,
-        )
-        for line in authors_lines:
-            if self._y_position < 50:
-                summary_pdf.showPage()
-                self._y_position = 750
-                summary_pdf.setFont("Helvetica-Bold", 10)
-            summary_pdf.drawString(165, self._y_position, line)
-            self._y_position -= 20
