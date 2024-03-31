@@ -8,10 +8,7 @@ boto3-stubs
 psycopg2-binary
 python-multipart
 PyPDF2
-reportlab
-reportlab-stubs
 python-jose
 types-python-jose
 passlib
 types-passlib
-Jinja2
