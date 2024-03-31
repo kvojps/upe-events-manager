@@ -49,7 +49,16 @@ class SummaryService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Papers cannot have empty fields to generate the summary",
             )
-        
+
+        html_bytes_summary = self._create_html_summary(event_areas)
+
+        return SummaryPdfResponse(
+            summary_pdf_folder=str(event.s3_folder_name),
+            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.html",
+            summary_pdf=html_bytes_summary,
+        )
+
+    def _create_html_summary(self, event_areas: list[str]) -> bytes:
         buffer = BytesIO()
 
         content = ""
@@ -60,10 +69,10 @@ class SummaryService:
             """
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                pages += 1 # TODO: Implement total pages
+                pages += int(paper.total_pages)
                 content += f"""
-                    <p><strong>Título:</strong>{str(paper.title)} - {pages}</p>
-                    <p><strong>Autores:</strong>{str(paper.authors)}</p>
+                    <p><strong>Título:</strong> {(str(paper.title)).capitalize()} - <strong>{pages}</strong></p>
+                    <p><strong>Autores:</strong> {str(paper.authors)}</p>
                     <div class="separator"></div>
                 """
 
@@ -119,12 +128,8 @@ class SummaryService:
             </body>
 
             </html> """
-            )
+        )
 
         buffer.write(template_html.encode("UTF-8"))
 
-        return SummaryPdfResponse(
-            summary_pdf_folder=str(event.s3_folder_name),
-            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.html",
-            summary_pdf=buffer.getvalue(),
-        )
+        return buffer.getvalue()
