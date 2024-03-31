@@ -77,6 +77,7 @@ class MergedPapersService:
                 papers = self._paper_repo.get_papers_by_area(area)
                 for paper in papers:
                     self._proccess_pdf_file(
+                        event_id,
                         zip_ref,
                         pdf_writer,
                         temp_dir,
@@ -111,6 +112,7 @@ class MergedPapersService:
 
     def _proccess_pdf_file(
         self,
+        event_id: int,
         zip_ref: zipfile.ZipFile,
         pdf_writer: PdfWriter,
         temp_dir: str,
@@ -126,7 +128,7 @@ class MergedPapersService:
         #     zip_ref, s3_folder_name, filename
         # )
 
-        self._update_paper_from_pdf(zip_ref, temp_dir, filename)
+        self._update_paper_from_pdf(event_id, zip_ref, temp_dir, filename)
         ProgressChecker.get_progress(
             "Progresso do cadastro",
             current_file,
@@ -159,7 +161,7 @@ class MergedPapersService:
             )
 
     def _update_paper_from_pdf(
-        self, zip_ref: zipfile.ZipFile, temp_dir: str, filename: str
+        self, event_id: int, zip_ref: zipfile.ZipFile, temp_dir: str, filename: str
     ) -> None:
         pdf_id = os.path.splitext(os.path.basename(filename))[0]
         pdf_reader = PdfReader(
@@ -168,7 +170,7 @@ class MergedPapersService:
         total_pages = len(pdf_reader.pages)
 
         if pdf_id.split()[0] not in self._papers_registered:
-            self._paper_repo.update_paper_pages(pdf_id, total_pages)
+            self._paper_repo.update_paper_pages(event_id, pdf_id, total_pages)
             self._papers_registered.append(pdf_id)
 
     def _upload_merged_papers_to_s3_event_folder(

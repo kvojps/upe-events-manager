@@ -119,8 +119,12 @@ class PaperAdapter(PaperRepository):
 
         return [area[0] for area in areas]
 
-    def update_paper_pages(self, pdf_id: str, pages: int) -> Paper:
-        paper_data = self._session.query(Paper).filter(Paper.pdf_id == pdf_id).first()
+    def update_paper_pages(self, event_id: int, pdf_id: str, pages: int) -> Paper:
+        paper_data = (
+            self._session.query(Paper)
+            .filter(Paper.event_id == event_id, Paper.pdf_id == pdf_id)
+            .first()
+        )
 
         paper_data.total_pages = pages
 
