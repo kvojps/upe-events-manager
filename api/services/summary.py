@@ -1,8 +1,12 @@
+import shutil
+import uuid
 from io import BytesIO
+import pdfkit  # type: ignore
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
+import os
 
 
 class SummaryPdfResponse(BaseModel):
@@ -51,11 +55,12 @@ class SummaryService:
             )
 
         html_bytes_summary = self._create_html_summary(event_areas)
+        pdf_bytes_summary = self._create_pdf_summary(html_bytes_summary)
 
         return SummaryPdfResponse(
             summary_pdf_folder=str(event.s3_folder_name),
-            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.html",
-            summary_pdf=html_bytes_summary,
+            summary_pdf_filename=f"{str(event.name).lower().replace(' ', '_')}_summary.pdf",
+            summary_pdf=pdf_bytes_summary,
         )
 
     def _create_html_summary(self, event_areas: list[str]) -> bytes:
@@ -131,5 +136,25 @@ class SummaryService:
         )
 
         buffer.write(template_html.encode("UTF-8"))
+
+        return buffer.getvalue()
+
+    def _create_pdf_summary(self, html_bytes_summary: bytes) -> bytes:
+        buffer = BytesIO()
+
+        temp_dir = "temp"
+        os.makedirs(temp_dir, exist_ok=True)
+        session_id = uuid.uuid4()
+
+        temp_html_file_path = f"{temp_dir}/{session_id}__summary.html"
+        with open(temp_html_file_path, "wb") as file:
+            file.write(html_bytes_summary)
+
+        temp_pdf_file_path = f"{temp_dir}/{session_id}__summary.pdf"
+        pdfkit.from_file(temp_html_file_path, temp_pdf_file_path)
+
+        buffer.write(open(temp_pdf_file_path, "rb").read())
+
+        shutil.rmtree(temp_dir)
 
         return buffer.getvalue()
