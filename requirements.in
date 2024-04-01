@@ -12,3 +12,4 @@ python-jose
 types-python-jose
 passlib
 types-passlib
+pdfkit

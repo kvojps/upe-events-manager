@@ -40,6 +40,8 @@ jmespath==1.0.1
     #   botocore
 passlib==1.7.4
     # via -r requirements.in
+pdfkit==1.0.0
+    # via -r requirements.in
 psycopg2-binary==2.9.9
     # via -r requirements.in
 pyasn1==0.5.1
