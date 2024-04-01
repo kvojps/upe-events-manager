@@ -1,3 +1,4 @@
+import os
 import shutil
 import uuid
 from io import BytesIO
@@ -6,7 +7,6 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
-import os
 
 
 class SummaryPdfResponse(BaseModel):
@@ -23,7 +23,6 @@ class SummaryService:
     ):
         self._paper_repo = paper_repo
         self._event_repo = event_repo
-        self._y_position = 750
 
     def create_summary_pdf(self, event_id: int) -> SummaryPdfResponse:
         event = self._event_repo.get_event_by_id(event_id)
