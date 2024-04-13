@@ -20,11 +20,9 @@ file_handler_adapter = FileHandlerS3Adapter()
 service = EventService(event_adapter)
 summary_service = SummaryService(paper_adapter, event_adapter)
 file_handler_service = FileHandlerService(file_handler_adapter)
-
 merged_papers_service = MergedPapersService(
     file_handler_service, event_adapter, paper_adapter
 )
-
 anal_service = AnalService(file_handler_service, event_adapter)
 
 
