@@ -2,8 +2,8 @@ from math import ceil
 from typing import Optional
 from fastapi import HTTPException
 from api.models.dto.event import EventDTO
-from api.models.responses.event import EventResponse, EventsPaginatedResponse
 from api.ports.event import EventRepository
+from api.services.responses.event import EventResponse, EventsPaginatedResponse
 from api.utils.date import str_to_date
 
 

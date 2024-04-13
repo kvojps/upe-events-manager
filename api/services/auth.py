@@ -5,9 +5,9 @@ from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError
 from api.config.dynaconf import settings
 from api.models.dto.user import AuthDTO, UserDTO
-from api.models.responses.user import AuthResponse, UserResponse
 from api.models.user import User
 from api.ports.user import UserRepository
+from api.services.responses.user import AuthResponse, UserResponse
 
 CRYPT_CONTEXT = CryptContext(schemes=["sha256_crypt"])
 

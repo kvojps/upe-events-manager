@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from api.adapters.repository.user import UserAdapter
 from api.models.dto.user import AuthDTO, UserDTO
-from api.models.responses.user import AuthResponse, UserResponse
 from api.security import is_super_user
 from api.services.auth import AuthService
+from api.services.responses.user import AuthResponse, UserResponse
 from api.utils.doc_responses import ExceptionResponse
 
 router = APIRouter()

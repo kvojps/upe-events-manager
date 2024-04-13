@@ -3,11 +3,11 @@ from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.event import EventDTO
-from api.models.responses.event import EventResponse
 from api.services.anal import AnalService
 from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
 from api.services.merged_papers import MergedPapersService
+from api.services.responses.event import EventResponse
 from api.services.summary import SummaryService
 from api.utils.doc_responses import ExceptionResponse
 

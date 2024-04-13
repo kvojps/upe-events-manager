@@ -4,9 +4,9 @@ from typing import Optional
 from fastapi import File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from api.models.dto.paper import PaperDTO
-from api.models.responses.paper import PaperResponse
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
+from api.services.responses.paper import PaperResponse
 
 
 class BatchPapersErrorResponse(BaseModel):
