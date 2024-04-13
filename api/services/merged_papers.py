@@ -7,7 +7,8 @@ from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
-from api.services.file_handler import FileHandlerService, PutObjectResponse
+from api.services.file_handler import FileHandlerService
+from api.services.responses.file_handler import PutObjectResponse
 from api.utils.progress_checker import ProgressChecker
 
 

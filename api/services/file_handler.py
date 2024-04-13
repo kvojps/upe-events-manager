@@ -1,11 +1,7 @@
 from botocore.exceptions import ClientError
 from fastapi import HTTPException, status
-from pydantic import BaseModel
 from api.ports.file_handler import FileHandlerProvider
-
-
-class PutObjectResponse(BaseModel):
-    key_filename: str
+from api.services.responses.file_handler import PutObjectResponse
 
 
 class FileHandlerService:
