@@ -1,18 +1,10 @@
 from math import ceil
 from typing import Optional
 from fastapi import HTTPException
-from pydantic import BaseModel
 from api.models.dto.event import EventDTO
-from api.models.responses.event import EventResponse
+from api.models.responses.event import EventResponse, EventsPaginatedResponse
 from api.ports.event import EventRepository
 from api.utils.date import str_to_date
-
-
-class EventsPaginatedResponse(BaseModel):
-    events: list[EventResponse]
-    total_events: int
-    total_pages: int
-    current_page: int
 
 
 class EventService:
@@ -45,18 +37,14 @@ class EventService:
         if final_date:
             str_to_date(final_date)
 
-        events_data = self._event_repo.get_events(
-            initial_date, final_date, name, page, page_size
-        )
-        events_response = [
-            EventResponse.from_event(event_data) for event_data in events_data
-        ]
-
-        return EventsPaginatedResponse(
-            events=events_response,
+        return EventsPaginatedResponse.from_events(
+            events=self._event_repo.get_events(
+                initial_date, final_date, name, page, page_size
+            ),
             total_events=self._event_repo.count_events(initial_date, final_date, name),
             total_pages=ceil(
-                self._event_repo.count_events(initial_date, final_date, name) / page_size
+                self._event_repo.count_events(initial_date, final_date, name)
+                / page_size
             ),
             current_page=page,
         )

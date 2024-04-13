@@ -38,3 +38,21 @@ class EventResponse(BaseModel):
                 else None
             ),
         )
+
+
+class EventsPaginatedResponse(BaseModel):
+    events: list[EventResponse]
+    total_events: int
+    total_pages: int
+    current_page: int
+
+    @classmethod
+    def from_events(
+        cls, events: list[Event], total_events: int, total_pages: int, current_page: int
+    ) -> "EventsPaginatedResponse":
+        return cls(
+            events=[EventResponse.from_event(event) for event in events],
+            total_events=total_events,
+            total_pages=total_pages,
+            current_page=current_page,
+        )
