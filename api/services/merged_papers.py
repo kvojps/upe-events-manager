@@ -48,20 +48,14 @@ class MergedPapersService:
 
         s3_folder_name = str(event.s3_folder_name)
 
-        try:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                merged_papers_pdf_writer = await self._process_zip_file(
-                    temp_dir, file, event_id
-                )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            merged_papers_pdf_writer = await self._process_zip_file(
+                temp_dir, file, event_id
+            )
 
-                merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
-                return self._upload_merged_papers_to_s3_event_folder(
-                    merged_papers_path, merged_papers_pdf_writer, s3_folder_name
-                )
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"An error occurred while processing the file: {str(e)}",
+            merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
+            return self._upload_merged_papers_to_s3_event_folder(
+                merged_papers_path, merged_papers_pdf_writer, s3_folder_name
             )
 
     async def _process_zip_file(
