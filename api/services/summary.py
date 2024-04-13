@@ -4,6 +4,8 @@ import uuid
 from io import BytesIO
 import pdfkit  # type: ignore
 from fastapi import HTTPException, status
+from PyPDF2 import PdfReader
+from api.models.dto.summary import SummaryDTO
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 from api.services.responses.summary import SummaryPdfResponse
@@ -18,7 +20,9 @@ class SummaryService:
         self._paper_repo = paper_repo
         self._event_repo = event_repo
 
-    def create_summary_pdf(self, event_id: int) -> SummaryPdfResponse:
+    def create_summary_pdf(
+        self, event_id: int, summary_dto: SummaryDTO
+    ) -> SummaryPdfResponse:
         event = self._event_repo.get_event_by_id(event_id)
 
         if not event:
@@ -47,7 +51,15 @@ class SummaryService:
                 detail="Papers cannot have empty fields to generate the summary",
             )
 
-        html_bytes_summary = self._create_html_summary(event_areas)
+        html_bytes_summary_without_pages_description = self._create_html_summary(
+            event_areas, 0, 0
+        )
+        summary_pages_length = self._count_pdf_summary_pages(
+            html_bytes_summary_without_pages_description
+        )
+        html_bytes_summary = self._create_html_summary(
+            event_areas, summary_dto.cover_pages_length, summary_pages_length
+        )
         pdf_bytes_summary = self._create_pdf_summary(html_bytes_summary)
 
         return SummaryPdfResponse(
@@ -56,23 +68,25 @@ class SummaryService:
             summary_pdf=pdf_bytes_summary,
         )
 
-    def _create_html_summary(self, event_areas: list[str]) -> bytes:
+    def _create_html_summary(
+        self, event_areas: list[str], cover_pages_length: int, summary_pages_length: int
+    ) -> bytes:
         buffer = BytesIO()
 
         content = ""
-        pages = 0
+        pages = cover_pages_length + summary_pages_length + 1
         for area in event_areas:
             content += f"""
                 <h1>{area}</h1>
             """
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
-                pages += int(paper.total_pages)
                 content += f"""
                     <p><strong>Título:</strong> {(str(paper.title)).capitalize()} - <strong>{pages}</strong></p>
                     <p><strong>Autores:</strong> {str(paper.authors)}</p>
                     <div class="separator"></div>
                 """
+                pages += int(paper.total_pages)
 
         template_html = """
             <!DOCTYPE html>
@@ -131,6 +145,25 @@ class SummaryService:
         buffer.write(template_html.encode("UTF-8"))
 
         return buffer.getvalue()
+
+    def _count_pdf_summary_pages(self, html_bytes_summary: bytes) -> int:
+        temp_dir = "temp"
+        os.makedirs(temp_dir, exist_ok=True)
+        session_id = uuid.uuid4()
+
+        temp_html_file_path = f"{temp_dir}/{session_id}__summary.html"
+        with open(temp_html_file_path, "wb") as file:
+            file.write(html_bytes_summary)
+
+        temp_pdf_file_path = f"{temp_dir}/{session_id}__summary.pdf"
+        pdfkit.from_file(temp_html_file_path, temp_pdf_file_path)
+
+        pdf_reader = PdfReader(temp_pdf_file_path)
+        pages_length = len(pdf_reader.pages)
+
+        shutil.rmtree(temp_dir)
+
+        return pages_length
 
     def _create_pdf_summary(self, html_bytes_summary: bytes) -> bytes:
         buffer = BytesIO()

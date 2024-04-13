@@ -3,6 +3,7 @@ from api.adapters.aws.file_handler import FileHandlerS3Adapter
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.event import EventDTO
+from api.models.dto.summary import SummaryDTO
 from api.services.anal import AnalService
 from api.services.event import EventService, EventsPaginatedResponse
 from api.services.file_handler import FileHandlerService
@@ -65,11 +66,12 @@ def get_events(
 )
 def update_summary_filename(
     event_id: int,
+    summmary_dto: SummaryDTO,
     summary_service: SummaryService = Depends(lambda: summary_service),
     file_handler_service: FileHandlerService = Depends(lambda: file_handler_service),
     event_service: EventService = Depends(lambda: service),
 ):
-    summary_pdf_response = summary_service.create_summary_pdf(event_id)
+    summary_pdf_response = summary_service.create_summary_pdf(event_id, summmary_dto)
     file_handler_response = file_handler_service.put_object(
         summary_pdf_response.summary_pdf,
         summary_pdf_response.summary_pdf_folder,
