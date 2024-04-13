@@ -4,15 +4,9 @@ import uuid
 from io import BytesIO
 import pdfkit  # type: ignore
 from fastapi import HTTPException, status
-from pydantic import BaseModel
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
-
-
-class SummaryPdfResponse(BaseModel):
-    summary_pdf_folder: str
-    summary_pdf_filename: str
-    summary_pdf: bytes
+from api.services.responses.summary import SummaryPdfResponse
 
 
 class SummaryService:
