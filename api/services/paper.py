@@ -58,10 +58,16 @@ class PaperService:
                 detail="Only CSV files are allowed",
             )
 
-        contents = await file.read()
-        decoded_content = contents.decode("utf-8").splitlines()
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        content = await file.read()
+        try:
+            decoded_content = content.decode("utf-8").splitlines()
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="Invalid CSV file: Format must be utf-8",
+            )
 
+        csv_reader = csv.DictReader(decoded_content, delimiter=";")
         batch_papers_errors: list[BatchPapersErrorResponse] = []
         for row in csv_reader:
             self._create_paper_by_csv_row(row, int(event.id), batch_papers_errors)
