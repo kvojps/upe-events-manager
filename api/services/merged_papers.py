@@ -176,7 +176,7 @@ class MergedPapersService:
             pdf_writer.write(merged_papers_path)
             pdf_writer.close()
             sys.stdout.write(
-                f"\nTempo para criação do zip: {time.time() - start_time:.2f} seconds\n"
+                f"\nTempo para criação do Merged papers PDF local: {time.time() - start_time:.2f} seconds\n"
             )
 
             return self._file_handler_service.put_object(
