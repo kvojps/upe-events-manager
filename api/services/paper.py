@@ -2,32 +2,15 @@ import csv
 from math import ceil
 from typing import Optional
 from fastapi import File, HTTPException, UploadFile, status
-from pydantic import BaseModel
 from api.models.dto.paper import PaperDTO
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
-from api.services.responses.paper import PaperResponse
-
-
-class BatchPapersErrorResponse(BaseModel):
-    id: int
-    message: str
-
-
-class BatchPapersResponse(BaseModel):
-    detail: str
-    errors: list[BatchPapersErrorResponse]
-
-
-class PapersPaginatedResponse(BaseModel):
-    papers: list[PaperResponse]
-    total_papers: int
-    total_pages: int
-    current_page: int
-
-
-class AreasResponse(BaseModel):
-    areas: list[str]
+from api.services.responses.paper import (
+    BatchPapersErrorResponse,
+    BatchPapersResponse,
+    PapersPaginatedResponse,
+    AreasResponse,
+)
 
 
 class PaperService:
@@ -107,15 +90,8 @@ class PaperService:
         page: int = 1,
         page_size: int = 10,
     ) -> PapersPaginatedResponse:
-        papers_data = self._paper_repo.get_papers(
-            search, area, event_id, page, page_size
-        )
-        papers_response = [
-            PaperResponse.from_paper(paper_data) for paper_data in papers_data
-        ]
-
-        return PapersPaginatedResponse(
-            papers=papers_response,
+        return PapersPaginatedResponse.from_papers(
+            papers=self._paper_repo.get_papers(search, area, event_id, page, page_size),
             total_papers=self._paper_repo.count_papers(search, area, event_id),
             total_pages=ceil(
                 self._paper_repo.count_papers(search, area, event_id) / page_size
