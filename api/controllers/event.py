@@ -84,7 +84,7 @@ def update_summary_filename(
 
 
 @router.patch(
-    "/{event_id}/merged-papers",
+    "/{event_id}/merged_papers",
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
     responses={

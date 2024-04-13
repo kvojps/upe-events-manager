@@ -17,7 +17,7 @@ service = PaperService(adapter, event_adapter)
 
 
 @router.post(
-    "/upload_csv/events/{event_id}",
+    "/{event_id}",
     response_model=BatchPapersResponse,
     status_code=status.HTTP_207_MULTI_STATUS,
     responses={
