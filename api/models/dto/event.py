@@ -6,6 +6,7 @@ class EventDTO(BaseModel):
     name: str
     initial_date: str
     final_date: str
+    promoted_by: str
 
     @validator("initial_date")
     def validate_initial_date(cls, value: str):

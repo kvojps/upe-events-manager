@@ -15,6 +15,7 @@ class EventAdapter(EventRepository):
             name=event.name,
             initial_date=event.initial_date,
             final_date=event.final_date,
+            promoted_by=event.promoted_by,
             s3_folder_name=f"""{event.name.lower().replace(" ", "_")}__{str(uuid.uuid4())}__{event.initial_date}_{event.final_date}""",
             summary_filename=None,
             merged_papers_filename=None,

@@ -10,6 +10,7 @@ class Event(Base):
     name = Column(String, unique=True, index=True)
     initial_date = Column(String)
     final_date = Column(String)
+    promoted_by = Column(String)
     s3_folder_name = Column(String)
     summary_filename = Column(String)
     merged_papers_filename = Column(String)

@@ -9,6 +9,7 @@ class EventResponse(BaseModel):
     name: str
     initial_date: str
     final_date: str
+    promoted_by: str
     s3_folder_name: str
     summary_filename: Optional[str]
     merged_papers_filename: Optional[str]
@@ -21,6 +22,7 @@ class EventResponse(BaseModel):
             name=str(event.name),
             initial_date=str(event.initial_date),
             final_date=str(event.final_date),
+            promoted_by=str(event.promoted_by),
             s3_folder_name=str(event.s3_folder_name),
             summary_filename=(
                 settings.CLOUDFRONT_DOMAIN + str(event.summary_filename)
