@@ -77,68 +77,94 @@ class SummaryService:
         pages = cover_pages_length + summary_pages_length + 1
         for area in event_areas:
             content += f"""
-                <h1>{area}</h1>
+                <h1 class="h1-section">{area}</h1>
+                <ul>
             """
             papers = self._paper_repo.get_papers_by_area(area)
             for paper in papers:
                 content += f"""
-                    <p><strong>Título:</strong> {(str(paper.title)).capitalize()} - <strong>{pages}</strong></p>
-                    <p><strong>Autores:</strong> {str(paper.authors)}</p>
-                    <div class="separator"></div>
+                    <li>
+                        <p>
+                            <strong>{(str(paper.title)).capitalize()}</strong>
+                        </p>
+                        <div class="div-autores-pagina">
+                            <p class="p-autores">
+                                {str(paper.authors)}
+                                <span>{pages}</span>
+                            </p>
+                        </div>
+                    </li>
                 """
                 pages += int(paper.total_pages)
 
+            content += "</ul>"
+
         template_html = """
-            <!DOCTYPE html>
+            <!doctype html>
             <html lang="en">
-
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Summary</title>
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-                <style>
-                    body {
-                        font-family: 'Roboto', sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f7f7f7;
-                    }
-
-                    .container {
-                        max-width: 800px;
-                        margin: 20px auto;
-                        padding: 20px;
-                        background-color: #fff;
-                        border-radius: 5px;
-                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    }
-
-                    h1 {
-                        font-size: 24px;
-                        color: #333;
-                        margin-bottom: 30px;
-                    }
-
-                    p {
-                        font-size: 16px;
-                        color: #555;
-                    }
-
-                    .separator {
-                        border-top: 1px solid #ccc;
-                        margin-top: 10px;
-                        margin-bottom: 10px;
-                    }
-                </style>
-            </head>""" + (
+                <head>
+                    <meta charset="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                    <title>Summary</title>
+                    <style>
+                        body {
+                            font-family: "Times New Roman";
+                            margin: 0;
+                            padding: 0;
+                            background-color: #f7f7f7;
+                            text-align: justify;
+                            text-justify: inter-word;
+                        }
+                        .container {
+                            max-width: 800px;
+                            margin: 20px auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 5px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }
+                        p {
+                            font-size: 16px;
+                            margin: 4px;
+                            width: 95%;
+                        }
+                        .p-autores {
+                            font-style: italic;
+                        }
+                        ul {
+                            list-style-type: none;
+                        }
+                        li {
+                            padding: 4px;
+                        }
+                        .div-autores-pagina {
+                            width: 95%;
+                            span {
+                            font-size: 18px;
+                            float: right;
+                            }
+                        }
+                        .separator {
+                            border-top: 1px solid #ccc;
+                            margin-top: 10px;
+                            margin-bottom: 10px;
+                        }
+                        .h1-title {
+                            padding-bottom: 32px;
+                        }
+                        .h1-section {
+                            padding-bottom: 24px;
+                        }
+                    </style>
+                </head>""" + (
             f"""
-            <body>
-                <div class="container">
-                    {content}
-                </div>
-            </body>
-
+                <body>
+                    <div class="container">
+                        <div class="separator"></div>
+                        <h1 class="h1-title">Sumário</h1>
+                        {content}
+                    </div>
+                </body>
             </html> """
         )
 
