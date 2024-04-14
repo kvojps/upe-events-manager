@@ -65,7 +65,7 @@ class AnalService:
             return self._file_handler_service.put_object(
                 output_file,
                 str(event.s3_folder_name),
-                "anal.pdf",
+                "anais.pdf",
             )
 
     async def _add_cover_file_to_temp_dir(
