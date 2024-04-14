@@ -53,6 +53,18 @@ def get_events(
     return event_service.get_events(initial_date, final_date, name, page, page_size)
 
 
+@router.get(
+    "/{event_id}",
+    response_model=EventResponse,
+    status_code=status.HTTP_200_OK,
+    responses={404: {"model": ExceptionResponse}},
+)
+def get_event_by_id(
+    event_id: int, event_service: EventService = Depends(lambda: service)
+):
+    return event_service.get_event_by_id(event_id)
+
+
 @router.patch(
     "/{event_id}/summary",
     response_model=EventResponse,

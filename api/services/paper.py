@@ -6,10 +6,10 @@ from api.models.dto.paper import PaperDTO
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 from api.services.responses.paper import (
+    AreasResponse,
     BatchPapersErrorResponse,
     BatchPapersResponse,
     PapersPaginatedResponse,
-    AreasResponse,
 )
 
 
@@ -98,6 +98,16 @@ class PaperService:
             ),
             current_page=page,
         )
+
+    def get_paper_by_id(self, paper_id: int):
+        paper = self._paper_repo.get_paper_by_id(paper_id)
+        if not paper:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Paper not found",
+            )
+
+        return paper
 
     def get_areas(self) -> AreasResponse:
         return AreasResponse(areas=self._paper_repo.get_areas())

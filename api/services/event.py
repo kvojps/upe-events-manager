@@ -49,6 +49,13 @@ class EventService:
             current_page=page,
         )
 
+    def get_event_by_id(self, event_id: int) -> EventResponse:
+        event = self._event_repo.get_event_by_id(event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail=f"Event not found")
+
+        return EventResponse.from_event(event)
+
     def update_summary_filename(
         self, event_id: int, summary_filename: str
     ) -> EventResponse:

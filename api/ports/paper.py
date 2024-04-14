@@ -19,6 +19,9 @@ class PaperRepository(ABC):
     ) -> list[Paper]: ...
 
     @abstractmethod
+    def get_paper_by_id(self, paper_id: int) -> Paper: ...
+
+    @abstractmethod
     def get_papers_by_area(self, area: str) -> list[Paper]: ...
 
     @abstractmethod

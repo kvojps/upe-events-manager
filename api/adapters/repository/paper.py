@@ -58,6 +58,9 @@ class PaperAdapter(PaperRepository):
 
         return papers
 
+    def get_paper_by_id(self, paper_id: int) -> Paper:
+        return self._session.query(Paper).filter(Paper.id == paper_id).first()
+
     def get_papers_by_area(self, area: str) -> list[Paper]:
         return (
             self._session.query(Paper)
