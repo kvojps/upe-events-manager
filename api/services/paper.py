@@ -67,7 +67,7 @@ class PaperService:
                 PaperDTO(
                     pdf_id=row["id"],
                     area=row["area"],
-                    title=row["titulo"],
+                    title=str(row["titulo"]).strip(),
                     authors=row["autores"],
                     is_ignored=False if row["ignorar"] == "n" else True,
                     total_pages=None,
