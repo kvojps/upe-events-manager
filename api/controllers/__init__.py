@@ -4,6 +4,7 @@ from .auth import router as auth_user_route
 from .event import router as event_router
 from .health_check import router as health_check_router
 from .paper import router as paper_router
+from .subscriber import router as subscriber_router
 
 main_router = APIRouter()
 
@@ -23,3 +24,5 @@ main_router.include_router(
 main_router.include_router(event_router, prefix="/events", tags=["Events"])
 
 main_router.include_router(paper_router, prefix="/papers", tags=["Papers"])
+
+main_router.include_router(subscriber_router, prefix="/subscribers", tags=["Subscribers"])

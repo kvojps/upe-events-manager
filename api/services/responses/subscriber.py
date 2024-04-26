@@ -25,7 +25,7 @@ class SubscriberResponse(BaseModel):
 
 
 class BatchSubscribersErrorResponse(BaseModel):
-    id: int
+    id: str
     message: str
 
 
