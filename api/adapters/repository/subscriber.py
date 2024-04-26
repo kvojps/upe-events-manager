@@ -1,5 +1,4 @@
 from api.config.postgres import SessionLocal
-from api.models.dto.subscriber import SubscriberDTO
 from api.models.subscriber import Subscriber
 from api.ports.subscriber import SubscriberRepository
 
@@ -8,14 +7,14 @@ class SubscriberAdapter(SubscriberRepository):
     def __init__(self):
         self._session = SessionLocal()
 
-    def create_subscriber(self, subscriber: SubscriberDTO) -> Subscriber:
+    def create_subscriber(self, cpf: str, email: str, event_id: int) -> Subscriber:
         subscriber_data = Subscriber(
-            name=subscriber.name,
-            cpf=subscriber.cpf,
-            email=subscriber.email,
-            workload=subscriber.workload,
+            name=None,
+            cpf=cpf,
+            email=email,
+            workload=None,
             is_present=False,
-            event_id=subscriber.event_id,
+            event_id=event_id,
         )
 
         self._session.add(subscriber_data)
