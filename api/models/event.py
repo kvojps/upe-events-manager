@@ -16,4 +16,5 @@ class Event(Base):
     merged_papers_filename = Column(String)
     anal_filename = Column(String)
 
+    subscribers = relationship("Subscriber", back_populates="event")
     papers = relationship("Paper", back_populates="event")
