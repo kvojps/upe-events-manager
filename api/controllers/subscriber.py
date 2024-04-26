@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.subscriber import SubscriberAdapter
 from api.services.responses.subscriber import (
@@ -44,8 +44,8 @@ async def batch_create_subscribers(
 )
 def get_subscribers(
     event_id: int,
-    page: int = 1,
-    page_size: int = 10,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=1, le=100),
     subscriber_service: SubscriberService = Depends(lambda: service),
 ):
     return subscriber_service.get_subscribers_by_event_id(event_id, page, page_size)
