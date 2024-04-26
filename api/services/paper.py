@@ -90,12 +90,11 @@ class PaperService:
         page: int = 1,
         page_size: int = 10,
     ) -> PapersPaginatedResponse:
+        papers_amount = self._paper_repo.count_papers(search, area, event_id)
         return PapersPaginatedResponse.from_papers(
             papers=self._paper_repo.get_papers(search, area, event_id, page, page_size),
-            total_papers=self._paper_repo.count_papers(search, area, event_id),
-            total_pages=ceil(
-                self._paper_repo.count_papers(search, area, event_id) / page_size
-            ),
+            total_papers=papers_amount,
+            total_pages=ceil(papers_amount / page_size),
             current_page=page,
         )
 
