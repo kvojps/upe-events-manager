@@ -22,3 +22,24 @@ class SubscriberAdapter(SubscriberRepository):
         self._session.refresh(subscriber_data)
 
         return subscriber_data
+
+    def get_subscribers(
+        self,
+        event_id: int,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> list[Subscriber]:
+        return (
+            self._session.query(Subscriber)
+            .filter(Subscriber.event_id == event_id)
+            .limit(page_size)
+            .offset((page - 1) * page_size)
+            .all()
+        )
+
+    def count_subscribers_by_event_id(self, event_id: int) -> int:
+        return (
+            self._session.query(Subscriber)
+            .filter(Subscriber.event_id == event_id)
+            .count()
+        )

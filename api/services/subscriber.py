@@ -1,11 +1,15 @@
 import csv
+from math import ceil
 from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.exc import SQLAlchemyError
 from validate_docbr import CPF  # type: ignore
 from api.ports.event import EventRepository
 from api.ports.subscriber import SubscriberRepository
-from api.services.responses.subscriber import (BatchSubscribersErrorResponse,
-                                               BatchSubscribersResponse)
+from api.services.responses.subscriber import (
+    BatchSubscribersErrorResponse,
+    BatchSubscribersResponse,
+    SubscribersPaginatedResponse,
+)
 from api.utils.user_validator import validate_cpf, validate_email
 
 
@@ -92,3 +96,25 @@ class SubscriberService:
                     message=f"Exception creating subscriber: {str(e)}",
                 )
             )
+
+    def get_subscribers_by_event_id(
+        self, event_id: int, page: int = 1, page_size: int = 10
+    ) -> SubscribersPaginatedResponse:
+
+        if not self._event_repo.get_event_by_id(event_id):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Event not found",
+            )
+
+        subscribers_amount = self._subscriber_repo.count_subscribers_by_event_id(
+            event_id
+        )
+        return SubscribersPaginatedResponse.from_subscribers(
+            subscribers=self._subscriber_repo.get_subscribers(
+                event_id, page, page_size
+            ),
+            total_subscribers=subscribers_amount,
+            total_pages=ceil(subscribers_amount / page_size),
+            current_page=page,
+        )
