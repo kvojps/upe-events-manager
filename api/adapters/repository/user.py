@@ -14,5 +14,16 @@ class UserAdapter(UserRepository):
         self._session.refresh(user_request)
         return user_request
 
+    def get_users(self, page: int = 1, page_size: int = 10) -> list[User]:
+        return (
+            self._session.query(User)
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+            .all()
+        )
+
     def get_user_by_username(self, username: str) -> User:
         return self._session.query(User).filter(User.username == username).first()
+
+    def count_users(self) -> int:
+        return self._session.query(User).count()
