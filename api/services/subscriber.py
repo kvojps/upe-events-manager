@@ -81,7 +81,7 @@ class SubscriberService:
         except ValueError as e:
             batch_subscribers_errors.append(
                 BatchSubscribersErrorResponse(
-                    id=cpf_row if cpf_row else "CPF not found",
+                    id=f"cpf: {cpf_row} - email: {email_row}",
                     message=f"Error creating subscriber: {str(e)}",
                 )
             )
