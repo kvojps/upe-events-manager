@@ -25,17 +25,17 @@ class EventResponse(BaseModel):
             promoted_by=str(event.promoted_by),
             s3_folder_name=str(event.s3_folder_name),
             summary_filename=(
-                settings.CLOUDFRONT_DOMAIN + str(event.summary_filename)
+                settings.S3_BASE_URL + str(event.summary_filename)
                 if event.summary_filename
                 else None
             ),
             merged_papers_filename=(
-                settings.CLOUDFRONT_DOMAIN + str(event.merged_papers_filename)
+                settings.S3_BASE_URL + str(event.merged_papers_filename)
                 if event.merged_papers_filename
                 else None
             ),
             anal_filename=(
-                settings.CLOUDFRONT_DOMAIN + str(event.anal_filename)
+                settings.S3_BASE_URL + str(event.anal_filename)
                 if event.anal_filename
                 else None
             ),
