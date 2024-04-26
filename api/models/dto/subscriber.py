@@ -1,14 +1,14 @@
 import re
+from typing import Optional
 from pydantic import BaseModel, validator
 from validate_docbr import CPF  # type: ignore
 
 
 class SubscriberDTO(BaseModel):
-    name: str
+    name: Optional[str]
     cpf: str
     email: str
-    workload: str
-    is_present: bool
+    workload: Optional[float]
     event_id: int
 
     @validator("cpf")
