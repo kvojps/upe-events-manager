@@ -10,7 +10,7 @@ main_router = APIRouter()
 main_router.include_router(
     auth_user_route,
     prefix="/auth",
-    tags=["User authentication"],
+    tags=["Authentication"],
 )
 
 main_router.include_router(
