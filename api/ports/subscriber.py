@@ -1,0 +1,8 @@
+from abc import ABC, abstractmethod
+from api.models.dto.subscriber import SubscriberDTO
+from api.models.subscriber import Subscriber
+
+
+class SubscriberRepository(ABC):
+    @abstractmethod
+    def create_subscriber(self, subscriber: SubscriberDTO) -> Subscriber: ...
