@@ -1,6 +1,7 @@
 from api.config.postgres import SessionLocal
 from api.models.subscriber import Subscriber
 from api.ports.subscriber import SubscriberRepository
+from typing import Optional
 
 
 class SubscriberAdapter(SubscriberRepository):
@@ -37,9 +38,18 @@ class SubscriberAdapter(SubscriberRepository):
             .all()
         )
 
+    def get_subscriber_by_email(self, email: str) -> Optional[Subscriber]:
+        return self._session.query(Subscriber).filter(Subscriber.email == email).first()
+
     def count_subscribers_by_event_id(self, event_id: int) -> int:
         return (
             self._session.query(Subscriber)
             .filter(Subscriber.event_id == event_id)
             .count()
         )
+
+    def update_subscriber(self, subscriber: Subscriber) -> Subscriber:
+        self._session.commit()
+        self._session.refresh(subscriber)
+
+        return subscriber

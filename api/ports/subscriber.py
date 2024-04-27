@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 from api.models.subscriber import Subscriber
 
 
@@ -15,4 +16,10 @@ class SubscriberRepository(ABC):
     ) -> list[Subscriber]: ...
 
     @abstractmethod
+    def get_subscriber_by_email(self, email: str) -> Optional[Subscriber]: ...
+
+    @abstractmethod
     def count_subscribers_by_event_id(self, event_id: int) -> int: ...
+
+    @abstractmethod
+    def update_subscriber(self, subscriber: Subscriber) -> Subscriber: ...
