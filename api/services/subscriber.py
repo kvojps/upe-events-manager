@@ -160,60 +160,60 @@ class SubscriberService:
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
                     <style>
-                    body {
-                        margin: 0;
-                    }
-                    main {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        height: 100vh;
-                        font-family: Poppins;
-                    }
-                    header {
-                        background-color: #050973;
-                        height: 20vh;
-                        width: 100vw;
-                    }
-                    .div-titulo {
-                        font-size: 32px;
-                    }
-                    .div-desc {
-                        height: 20vh;
-                        p {
-                        padding: 0px 12px 0px 12px;
-                        text-align: justify;
-                        text-justify: inter-word;
+                        body {
+                            margin: 0;
                         }
-                    } 
-                    .div-assinaturas {
-                        height: 20vh;
-                        width: 100vw;
-                        display: flex;
-                        justify-content: space-evenly;
-                        align-items: center;
+                        main {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Poppins;
+                        }
+                        header {
+                            background-color: #050973;
+                            height: 20vh;
+                            width: 100vw;
+                        }
+                        .div-titulo {
+                            font-size: 32px;
+                        }
+                        .div-desc {
+                            height: 20vh;
+                            p {
+                            padding: 0px 12px 0px 12px;
+                            text-align: justify;
+                            text-justify: inter-word;
+                            }
+                        } 
+                        .div-assinaturas {
+                            height: 20vh;
+                            width: 100vw;
+                            display: flex;
+                            justify-content: space-evenly;
+                            align-items: center;
 
-                    .div-assinaturas-content {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        padding-top: 15px;
-                        h2 {
-                        margin: 0px;
+                        .div-assinaturas-content {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            padding-top: 15px;
+                            h2 {
+                            margin: 0px;
+                            }
+                            }
                         }
+                        footer {
+                            display: flex;
+                            width: 95%;
+                            justify-content: space-between;
+                            .div-parceiros {
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            }
                         }
-                    }
-                    footer {
-                        display: flex;
-                        width: 95%;
-                        justify-content: space-between;
-                        .div-parceiros {
-                        display: flex;
-                        align-items: center;
-                        gap: 5px;
-                        }
-                    }
                     </style>
                 </head>""" + (
             f"""
