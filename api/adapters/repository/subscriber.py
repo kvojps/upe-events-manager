@@ -38,8 +38,15 @@ class SubscriberAdapter(SubscriberRepository):
             .all()
         )
 
-    def get_subscriber_by_email(self, email: str) -> Optional[Subscriber]:
-        return self._session.query(Subscriber).filter(Subscriber.email == email).first()
+    def get_event_subscriber_by_email(
+        self, event_id: int, email: str
+    ) -> Optional[Subscriber]:
+        return (
+            self._session.query(Subscriber)
+            .filter(Subscriber.event_id == event_id)
+            .filter(Subscriber.email == email)
+            .first()
+        )
 
     def count_subscribers_by_event_id(self, event_id: int) -> int:
         return (
