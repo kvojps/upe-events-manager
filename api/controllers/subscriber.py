@@ -1,4 +1,6 @@
+from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from fastapi.responses import FileResponse
 from api.adapters.repository.event import EventAdapter
 from api.adapters.repository.subscriber import SubscriberAdapter
 from api.services.responses.subscriber import (
@@ -49,6 +51,33 @@ def get_subscribers(
     subscriber_service: SubscriberService = Depends(lambda: service),
 ):
     return subscriber_service.get_subscribers_by_event_id(event_id, page, page_size)
+
+
+@router.get(
+    "/{event_id}/certificate",
+    responses={
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+    },
+)
+async def get_subscriber_certificate(
+    event_id: int,
+    email: str,
+    subscriber_service: SubscriberService = Depends(lambda: service),
+):
+    file_bytes = subscriber_service.get_subscriber_certificate(event_id, email)
+
+    with NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(file_bytes)
+        temp_file.seek(0)
+
+        return FileResponse(
+            temp_file.name,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={email}_certificate.pdf"
+            },
+        )
 
 
 @router.patch(
