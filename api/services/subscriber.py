@@ -118,3 +118,63 @@ class SubscriberService:
             total_pages=ceil(subscribers_amount / page_size),
             current_page=page,
         )
+
+    async def batch_update_subscribers(
+        self, event_id: int, file: UploadFile = File(...)
+    ) -> BatchSubscribersResponse:
+        if not (event := self._event_repo.get_event_by_id(event_id)):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Event not found",
+            )
+
+        if not file.filename or not file.filename.endswith(".csv"):
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="Only CSV files are allowed",
+            )
+
+        content = await file.read()
+        try:
+            decoded_content = content.decode("utf-8").splitlines()
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="Invalid CSV file: Format must be utf-8",
+            )
+
+        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        batch_subscribers_errors: list[BatchSubscribersErrorResponse] = []
+
+        for row in csv_reader:
+            self._update_subscriber_by_csv_row(
+                row, int(event.id), batch_subscribers_errors
+            )
+
+        return BatchSubscribersResponse(
+            detail="Batch subscribers finished",
+            errors=batch_subscribers_errors,
+        )
+
+    def _update_subscriber_by_csv_row(
+        self,
+        row,
+        event_id: int,
+        batch_subscribers_errors: list[BatchSubscribersErrorResponse],
+    ) -> None:
+        try:
+            if subscriber_to_update := self._subscriber_repo.get_event_subscriber_by_email(
+                event_id, str(row["email"])
+            ):
+                subscriber_to_update.name = str(row["nome"])  # type: ignore
+                subscriber_to_update.workload = float(row["ch"])  # type: ignore
+                subscriber_to_update.is_present = True  # type: ignore
+
+                self._subscriber_repo.update_subscriber(subscriber_to_update)
+        except Exception as e:
+            batch_subscribers_errors.append(
+                BatchSubscribersErrorResponse(
+                    id=subscriber_to_update.email if subscriber_to_update.email else "No id available",  # type: ignore
+                    message=f"Exception creating subscriber: {str(e)}",
+                )
+            )

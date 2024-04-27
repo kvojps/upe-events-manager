@@ -49,3 +49,21 @@ def get_subscribers(
     subscriber_service: SubscriberService = Depends(lambda: service),
 ):
     return subscriber_service.get_subscribers_by_event_id(event_id, page, page_size)
+
+
+@router.patch(
+    "/{event_id}",
+    response_model=BatchSubscribersResponse,
+    status_code=status.HTTP_207_MULTI_STATUS,
+    responses={
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+        415: {"model": ExceptionResponse},
+    },
+)
+async def update_subscribers(
+    event_id: int,
+    file: UploadFile = File(...),
+    subscriber_service: SubscriberService = Depends(lambda: service),
+):
+    return await subscriber_service.batch_update_subscribers(event_id, file)
