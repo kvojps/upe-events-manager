@@ -31,7 +31,7 @@ class PaperService:
 
         if self._paper_repo.count_papers_by_event_id(event_id) > 0:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Papers already created for this event",
             )
 
@@ -72,6 +72,13 @@ class PaperService:
                     is_ignored=False if row["ignorar"] == "n" else True,
                     total_pages=None,
                     event_id=event_id,
+                )
+            )
+        except KeyError as e:
+            batch_papers_response.append(
+                BatchPapersErrorResponse(
+                    id=0,
+                    message=f"Error creating subscriber: {str(e)}",
                 )
             )
         except Exception as e:

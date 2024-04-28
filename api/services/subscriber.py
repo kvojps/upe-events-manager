@@ -83,6 +83,13 @@ class SubscriberService:
                 email=email_row,
                 event_id=event_id,
             )
+        except KeyError as e:
+            batch_subscribers_errors.append(
+                BatchSubscribersErrorResponse(
+                    id="Invalid CSV row",
+                    message=f"Error creating subscriber: {str(e)}",
+                )
+            )
         except SQLAlchemyError as e:
             batch_subscribers_errors.append(
                 BatchSubscribersErrorResponse(
@@ -351,6 +358,13 @@ class SubscriberService:
                 subscriber_to_update.is_present = True  # type: ignore
 
                 self._subscriber_repo.update_subscriber(subscriber_to_update)
+        except KeyError as e:
+            batch_subscribers_errors.append(
+                BatchSubscribersErrorResponse(
+                    id="Invalid CSV row",
+                    message=f"Error creating subscriber: {str(e)}",
+                )
+            )
         except Exception as e:
             batch_subscribers_errors.append(
                 BatchSubscribersErrorResponse(
