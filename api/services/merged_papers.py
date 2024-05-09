@@ -23,6 +23,7 @@ class MergedPapersService:
         self._event_repo = event_repo
         self._paper_repo = paper_repo
         self._papers_registered: list[str] = []
+        self._papers_not_founded: list[str] = []
 
     async def merge_pdf_files(
         self, event_id: int, file: UploadFile = File(...)
@@ -52,6 +53,13 @@ class MergedPapersService:
             merged_papers_pdf_writer = await self._process_zip_file(
                 temp_dir, file, event_id
             )
+
+            if (papers_length := len(self._papers_not_founded)) > 0:
+                self._papers_not_founded = []
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"{papers_length} papers not found on zip: {', '.join(self._papers_not_founded)}",
+                )
 
             merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
             return self._upload_merged_papers_to_s3_event_folder(
@@ -115,7 +123,11 @@ class MergedPapersService:
         current_file: int,
         start_time: float,
     ) -> None:
-        zip_ref.extract(f"{zip_ref.namelist()[0]}{filename}", path=temp_dir)
+        try:
+            zip_ref.extract(f"{zip_ref.namelist()[0]}{filename}", path=temp_dir)
+        except KeyError:
+            self._papers_not_founded.append(filename)
+            return
 
         self._add_paper_pages_to_pdf_writer(zip_ref, pdf_writer, temp_dir, filename)
 
