@@ -16,6 +16,9 @@ class SubscriberRepository(ABC):
     ) -> list[Subscriber]: ...
 
     @abstractmethod
+    def get_listeners(self, event_id: int) -> list[Subscriber]: ...
+
+    @abstractmethod
     def get_event_subscriber_by_email(
         self, event_id: int, email: str
     ) -> Optional[Subscriber]: ...

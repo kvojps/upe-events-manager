@@ -60,3 +60,11 @@ class SubscriberAdapter(SubscriberRepository):
         self._session.refresh(subscriber)
 
         return subscriber
+
+    def get_listeners(self, event_id: int) -> list[Subscriber]:
+        return (
+            self._session.query(Subscriber)
+            .filter(Subscriber.event_id == event_id)
+            .filter(Subscriber.is_present)
+            .all()
+        )
