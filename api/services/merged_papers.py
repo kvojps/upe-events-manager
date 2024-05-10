@@ -25,7 +25,7 @@ class MergedPapersService:
         self._file_handler_service = file_handler_service
         self._event_repo = event_repo
         self._paper_repo = paper_repo
-        self._actual_page = 88 #TODO: Remove this hardcoded value
+        self._actual_page = 89 #TODO: Remove this hardcoded value
         self._papers_registered: list[str] = []
         self._papers_not_founded: list[str] = []
 
