@@ -55,10 +55,11 @@ class MergedPapersService:
             )
 
             if (papers_length := len(self._papers_not_founded)) > 0:
+                detail = f"{papers_length} papers not found on zip: {', '.join(self._papers_not_founded)}"
                 self._papers_not_founded = []
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"{papers_length} papers not found on zip: {', '.join(self._papers_not_founded)}",
+                    detail=detail,
                 )
 
             merged_papers_path = os.path.join(temp_dir, "merged_papers.pdf")
