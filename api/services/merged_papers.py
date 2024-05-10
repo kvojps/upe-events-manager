@@ -1,3 +1,4 @@
+import io
 import os
 import sys
 import tempfile
@@ -5,6 +6,8 @@ import time
 import zipfile
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
+from reportlab.lib.pagesizes import A4, landscape  # type: ignore
+from reportlab.pdfgen import canvas  # type: ignore
 from api.ports.event import EventRepository
 from api.ports.paper import PaperRepository
 from api.services.file_handler import FileHandlerService
@@ -22,6 +25,7 @@ class MergedPapersService:
         self._file_handler_service = file_handler_service
         self._event_repo = event_repo
         self._paper_repo = paper_repo
+        self._actual_page = 88 #TODO: Remove this hardcoded value
         self._papers_registered: list[str] = []
         self._papers_not_founded: list[str] = []
 
@@ -154,9 +158,19 @@ class MergedPapersService:
         pdf_reader = PdfReader(
             os.path.join(temp_dir, f"{zip_ref.namelist()[0]}{filename}")
         )
-        for page_num in range(0, len(pdf_reader.pages)):
-            page_obj = pdf_reader.pages[page_num]
-            pdf_writer.add_page(page_obj)
+        for _, page in enumerate(pdf_reader.pages):
+            #TODO: Extract create page number logic to a method
+            packet = io.BytesIO()
+            canvas_writer = canvas.Canvas(packet, pagesize=landscape(A4))
+            canvas_writer.drawString(10, 40, f"{self._actual_page}")
+            canvas_writer.save()
+            packet.seek(0)
+            page_number_pdf = PdfReader(packet)
+            page.merge_page(page_number_pdf.pages[0])
+
+            pdf_writer.add_page(page)
+
+            self._actual_page += 1
 
     def _upload_paper_to_s3_event_folder(
         self, zip_ref: zipfile.ZipFile, event_folder: str, filename: str

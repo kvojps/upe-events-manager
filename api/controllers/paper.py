@@ -47,6 +47,10 @@ def get_papers(
     return paper_service.get_papers(search, area, event_id, page, page_size)
 
 
+@router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
+def get_areas(paper_service: PaperService = Depends(lambda: service)):
+    return paper_service.get_areas()
+
 @router.get(
     "/{paper_id}",
     response_model=PaperResponse,
@@ -58,8 +62,3 @@ def get_paper_by_id(
     paper_service: PaperService = Depends(lambda: service),
 ):
     return paper_service.get_paper_by_id(paper_id)
-
-
-@router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
-def get_areas(paper_service: PaperService = Depends(lambda: service)):
-    return paper_service.get_areas()
