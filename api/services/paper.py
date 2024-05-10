@@ -50,7 +50,7 @@ class PaperService:
                 detail="Invalid CSV file: Format must be utf-8",
             )
 
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        csv_reader = csv.DictReader(decoded_content, delimiter=",")
         batch_papers_errors: list[BatchPapersErrorResponse] = []
         for row in csv_reader:
             self._create_paper_by_csv_row(row, int(event.id), batch_papers_errors)
@@ -66,7 +66,7 @@ class PaperService:
             self._paper_repo.create_paper(
                 PaperDTO(
                     pdf_id=row["id"],
-                    area=row["area"],
+                    area=str(row["area"]).strip(),
                     title=str(row["titulo"]).strip(),
                     authors=row["autores"],
                     is_ignored=False if row["ignorar"] == "n" else True,
