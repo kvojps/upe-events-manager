@@ -57,7 +57,7 @@ class SubscriberService:
                 detail="Invalid CSV file: Format must be utf-8",
             )
 
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        csv_reader = csv.DictReader(decoded_content, delimiter=",")
         batch_subscribers_errors: list[BatchSubscribersErrorResponse] = []
         cpf_validator = CPF()
         for row in csv_reader:
@@ -354,7 +354,7 @@ class SubscriberService:
                 detail="Invalid CSV file: Format must be utf-8",
             )
 
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        csv_reader = csv.DictReader(decoded_content, delimiter=",")
         batch_subscribers_errors: list[BatchSubscribersErrorResponse] = []
 
         for row in csv_reader:

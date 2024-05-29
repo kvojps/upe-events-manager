@@ -1,7 +1,7 @@
-from api.config.postgres import SessionLocal
+from typing import Optional
+from api.config.postgres import SessionLocal, get_session
 from api.models.subscriber import Subscriber
 from api.ports.subscriber import SubscriberRepository
-from typing import Optional
 
 
 class SubscriberAdapter(SubscriberRepository):
@@ -9,20 +9,21 @@ class SubscriberAdapter(SubscriberRepository):
         self._session = SessionLocal()
 
     def create_subscriber(self, cpf: str, email: str, event_id: int) -> Subscriber:
-        subscriber_data = Subscriber(
-            name=None,
-            cpf=cpf,
-            email=email,
-            workload=None,
-            is_present=False,
-            event_id=event_id,
-        )
+        with get_session() as session:
+            subscriber_data = Subscriber(
+                name=None,
+                cpf=cpf,
+                email=email,
+                workload=None,
+                is_present=False,
+                event_id=event_id,
+            )
 
-        self._session.add(subscriber_data)
-        self._session.commit()
-        self._session.refresh(subscriber_data)
+            session.add(subscriber_data)
+            session.commit()
+            session.refresh(subscriber_data)
 
-        return subscriber_data
+            return subscriber_data
 
     def get_subscribers(
         self,
@@ -56,10 +57,11 @@ class SubscriberAdapter(SubscriberRepository):
         )
 
     def update_subscriber(self, subscriber: Subscriber) -> Subscriber:
-        self._session.commit()
-        self._session.refresh(subscriber)
+        with get_session() as session:
+            session.merge(subscriber)
+            session.commit()
 
-        return subscriber
+            return subscriber
 
     def get_listeners(self, event_id: int) -> list[Subscriber]:
         return (
