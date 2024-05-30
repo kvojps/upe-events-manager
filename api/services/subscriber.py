@@ -57,7 +57,7 @@ class SubscriberService:
                 detail="Invalid CSV file: Format must be utf-8",
             )
 
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        csv_reader = csv.DictReader(decoded_content, delimiter=",")
         batch_subscribers_errors: list[BatchSubscribersErrorResponse] = []
         cpf_validator = CPF()
         for row in csv_reader:
@@ -187,111 +187,86 @@ class SubscriberService:
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
-                    body {
-                        margin: 0px;
-                    }
-                    main {
-                        font-family: Arial;
-                    }
-                    header {
-                        background-color: #050973;
-                        height: 200px;
-                    }
-                    h2 {
-                        margin: 0px;
-                        padding-top: 84px;
-                    }
-                    p {
-                        margin: 0px;
-                        font-size: 24px;
-                    }
-                    .div-titulo {
-                        height: 200px;
-                        font-size: 32px;
-                        text-align: center;
-                    }
-                    .div-desc {
-                        height: 100px;
-                        text-align: center;
-
-                        p {
-                            padding: 0px 12px 0px 12px;
-                        }
-                    }
-                    .div-assinaturas {
-                        position: relative;
-                        height: 200px;
-                        padding-bottom: 40px;
-                        text-align: center;
-
-                    }
-                    .img-assinatura {
-                        position: absolute;
-                        top: 15px;
-                        right: 45%;
-                    }
-                    footer {
-                        position: absolute;
-                        margin: 0 2.5%;
-                        width: 95%;
-
-                        .div-parceiros {
-                            align-items: center;
-                            gap: 25px;
-                        }
-                    }
-                    .parceiros {
-                        margin: 0px 5px;
-                    }
-                    .secap {
-                        right: 0%;
-                        position: absolute;
-                        justify-self: end;
-                        margin-top: -40px;
-                    }
-                </style>
+                @font-face {
+                    font-family: 'Poppins';
+                    src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+                }
+            body {
+                
+                    margin: 0; 
+                    width: 100%;
+                    height: 100%;
+                    font-family: Arial; 
+                    background-color: #fef7ee
+                }
+            main {
+                width: 1920px;
+                margin: 0;
+                height: 1080px;
+            }
+            header {
+                width: 100%;
+                height: 200px;
+                position: relative;
+                top: 0;
+            }
+            .div-titulo {
+                text-align: center;
+            }
+            .div-desc {
+                width: 85%;
+                margin: 0 auto;
+                padding-top: 100px;
+                padding-bottom: 100px;
+            }
+            .div-desc p {
+                font-size: 24px;
+            }
+            .div-assinaturas {
+                width: 100%;
+                height: 180px;
+                text-align: center;
+            }
+            .div-assinaturas-content {
+                display: inline-block;
+                text-align: center;
+            }
+            footer {
+                padding-top: 64px;
+                margin-top: 9px;
+                width: 100%;
+                position: relative;
+                bottom: 0;
+                }
+            
+        }
+      </style>
             </head>""" + (
             f"""
             <body>
                 <main>
                     <header>
+                        <img style="width: 100%" src="{settings.S3_BASE_URL}cabecalho_certificado.png"/>
                     </header>
                     <div class="div-titulo">
-                        <h1>CERTIFICADO</h1>
+                        <img style="" src="{settings.S3_BASE_URL}titulo_certificado.png"/>
                     </div>
                     <div class="div-desc">
                         <p>
-                            CERTIFICAMOS QUE <strong> {str(subscriber.name).upper()}</strong> PARTICIPOU COMO <strong>OUVINTE</strong> NA
+                            CERTIFICAMOS QUE <strong>{str(subscriber.name).upper()}</strong> PARTICIPOU COMO <strong>OUVINTE</strong> NA
                             <strong> {str(event.name).upper()}</strong>,
-                            PROMOVIDA POR {str(event.promoted_by).upper()}, DE <strong>{initial_date}</strong> A <strong>{final_date}</strong>, COM CARGA HORÁRIA DE
-                            <strong>{subscriber.workload} </strong>HORAS.
+                            PROMOVIDA PELA {str(event.promoted_by).upper()}, DE <strong>{initial_date}</strong> A <strong>{final_date}</strong>, COM CARGA HORÁRIA DE
+                            <strong>{subscriber.workload} </strong>HORA(S).
                         </p>
 
                     </div>
                     <div class="div-assinaturas">
-                        <img class="img-assinatura" style="width: 180px;" src="{settings.S3_BASE_URL}resources/higor_signature.png" alt="">
-                        <h2>HIGOR RICARDO MONTEIRO SANTOS</h2>
-                        <p>Coordenador Setorial de Extensão e Cultura da UPE Garanhuns</p>
+                        <div class="div-assinaturas-content">
+                            <img style="width: 70%" src="{settings.S3_BASE_URL}assinatura_certificado.png" alt="">
+                        </div>
                     </div>
-                    <footer>
-                        <div class="div-parceiros">
-                            <img class="parceiros" style="width: 80px"
-                                src="{settings.S3_BASE_URL}resources/upe_icon.png"
-                                alt="">
-                            <img class="parceiros" style="width: 60px"
-                                src="{settings.S3_BASE_URL}resources/ufape_icon.png"
-                                alt="">
-                            <img class="parceiros" style="width: 90px"
-                                src="{settings.S3_BASE_URL}resources/ifpe_icon.png"
-                                alt="">
-                            <img class="parceiros" style="width: 90px"
-                                src="{settings.S3_BASE_URL}resources/aesga_icon.png" alt="">
-                        </div>
-                        <div class="secap">
-                            <img class="secap" style="width: 120px"
-                                src="{settings.S3_BASE_URL}resources/secap_icon.png"
-                                alt="">
-                        </div>
+                    <footer >
+                        <img src="{settings.S3_BASE_URL}rodape_certificado.png" style="width: 100%"/>
                     </footer>
                 </main>
             </body>
@@ -354,7 +329,7 @@ class SubscriberService:
                 detail="Invalid CSV file: Format must be utf-8",
             )
 
-        csv_reader = csv.DictReader(decoded_content, delimiter=";")
+        csv_reader = csv.DictReader(decoded_content, delimiter=",")
         batch_subscribers_errors: list[BatchSubscribersErrorResponse] = []
 
         for row in csv_reader:
