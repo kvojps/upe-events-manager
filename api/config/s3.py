@@ -1,7 +1,7 @@
 import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
-from api.config.dynaconf import settings
+from core.infrastructure.settings.env_handler import settings
 
 
 class S3Config:

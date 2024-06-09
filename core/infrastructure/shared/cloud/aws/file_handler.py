@@ -4,10 +4,10 @@ import threading
 import time
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
-from api.config.dynaconf import settings
 from api.config.s3 import S3Config
-from api.ports.file_handler import FileHandlerProvider
 from api.utils.progress_checker import ProgressChecker
+from core.infrastructure.settings.env_handler import settings
+from core.infrastructure.shared.cloud.file_handler import FileHandlerProvider
 
 MB = 1024 * 1024
 

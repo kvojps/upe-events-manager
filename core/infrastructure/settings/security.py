@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from api.config.dynaconf import settings
+from core.infrastructure.settings.env_handler import settings
 from api.models.user import User, UserType
 from core.infrastructure.settings.db_connection import get_session
 

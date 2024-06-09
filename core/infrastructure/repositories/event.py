@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 from api.models.dto.event import EventDTO
 from api.models.event import Event
-from typing import Optional
 
 
 class EventRepository(ABC):

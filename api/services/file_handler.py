@@ -1,6 +1,6 @@
 from botocore.exceptions import ClientError
 from fastapi import HTTPException, status
-from api.ports.file_handler import FileHandlerProvider
+from core.infrastructure.shared.cloud.file_handler import FileHandlerProvider
 from api.services.responses.file_handler import PutObjectResponse
 
 

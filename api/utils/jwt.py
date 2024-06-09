@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from jose import JWTError, jwt
-from api.adapters.repository.user import UserAdapter
-from api.config.dynaconf import settings
+from core.infrastructure.repositories.orm.user import UserAdapter
+from core.infrastructure.settings.env_handler import settings
 
 
 def _get_user_adapter():

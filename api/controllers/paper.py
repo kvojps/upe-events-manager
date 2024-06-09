@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from api.adapters.repository.event import EventAdapter
-from api.adapters.repository.paper import PaperAdapter
 from api.services.paper import PaperService
 from api.services.responses.paper import (
     AreasResponse,
@@ -9,6 +7,8 @@ from api.services.responses.paper import (
     PapersPaginatedResponse,
 )
 from api.utils.doc_responses import ExceptionResponse
+from core.infrastructure.repositories.orm.event import EventAdapter
+from core.infrastructure.repositories.orm.paper import PaperAdapter
 
 router = APIRouter()
 

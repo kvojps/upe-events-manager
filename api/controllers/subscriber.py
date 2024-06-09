@@ -1,15 +1,15 @@
 from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.responses import FileResponse
-from api.adapters.aws.email_handler import EmailHandlerSESAdapter
-from api.adapters.repository.event import EventAdapter
-from api.adapters.repository.subscriber import SubscriberAdapter
 from api.services.responses.subscriber import (
     BatchSubscribersResponse,
     SubscribersPaginatedResponse,
 )
 from api.services.subscriber import SubscriberService
 from api.utils.doc_responses import ExceptionResponse
+from core.infrastructure.repositories.orm.event import EventAdapter
+from core.infrastructure.repositories.orm.subscriber import SubscriberAdapter
+from core.infrastructure.shared.cloud.aws.email_handler import EmailHandlerSESAdapter
 
 router = APIRouter()
 

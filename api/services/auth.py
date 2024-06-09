@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException
 from jose import jwt
 from passlib.context import CryptContext
-from api.config.dynaconf import settings
+from core.infrastructure.settings.env_handler import settings
 from api.models.dto.user import AuthDTO
-from api.ports.user import UserRepository
+from core.infrastructure.repositories.user import UserRepository
 from api.services.responses.user import AuthResponse, UserResponse
 
 CRYPT_CONTEXT = CryptContext(schemes=["sha256_crypt"])

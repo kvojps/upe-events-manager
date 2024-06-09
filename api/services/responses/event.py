@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from api.config.dynaconf import settings
+from core.infrastructure.settings.env_handler import settings
 from api.models.event import Event
 
 

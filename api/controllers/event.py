@@ -1,7 +1,4 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from api.adapters.aws.file_handler import FileHandlerS3Adapter
-from api.adapters.repository.event import EventAdapter
-from api.adapters.repository.paper import PaperAdapter
 from api.models.dto.event import EventDTO
 from api.models.dto.summary import SummaryDTO
 from api.services.anal import AnalService
@@ -11,6 +8,9 @@ from api.services.merged_papers import MergedPapersService
 from api.services.responses.event import EventResponse
 from api.services.summary import SummaryService
 from api.utils.doc_responses import ExceptionResponse
+from core.infrastructure.repositories.orm.event import EventAdapter
+from core.infrastructure.repositories.orm.paper import PaperAdapter
+from core.infrastructure.shared.cloud.aws.file_handler import FileHandlerS3Adapter
 
 router = APIRouter()
 

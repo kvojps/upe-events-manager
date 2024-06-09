@@ -4,8 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from api.config.ses import SESConfig
 from api.models.subscriber import Subscriber
-from api.ports.email_handler import EmailHandlerProvider
-from api.config.dynaconf import settings
+from core.infrastructure.settings.env_handler import settings
+from core.infrastructure.shared.cloud.email_handler import EmailHandlerProvider
 
 
 class EmailHandlerSESAdapter(EmailHandlerProvider):
