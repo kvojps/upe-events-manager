@@ -29,3 +29,14 @@
 - **Etapa 5)** Gerar os anais:
   - **Entrada**: Arquivo PDF referente a capa;
   - **Saída**: Arquivo PDF referente ao anal (Capa + sumário + artigos agrupados);
+
+# Fluxo de envio dos certificados
+- **Etapa 1)** Cadastro dos inscritos:
+  - **Entrada**: Arquivo CSV
+    - O arquivo CSV deve possuir as colunas cpf, email;
+- **Etapa 2)** Cadastro dos ouvintes:
+  - Ouvintes são inscritos que participaram das atividades dos eventos;
+  - **Entrada**: Arquivo CSV
+    - O arquivo CSV deve possuir as colunas nome, email, ch;
+- **Etapa 3)**: Envio dos certificados;
+  - Envio dos certificados para os ouvintes;
