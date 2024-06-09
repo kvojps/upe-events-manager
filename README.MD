@@ -14,16 +14,18 @@
   * uvicorn api.app:app --reload;
 * Acesse [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) **(Swagger do projeto)**;
 
-# Fluxo de criação do anal
+# Fluxo de criação dos anais
 - **Etapa 1)** Criar evento;
-- **Etapa 2)** Cadastrar papers:
-  - **Entrada**: Arquivo CSV;
-  - **Saída**: Papers pré-cadastrados (falta o preenchimento da quantidade de páginas);
-- **Etapa 3)** Processar PDFs referentes aos papers:
-  - **Entrada**: Arquivo ZIP;
-  - **Saída**: Finalização do cadastro de papers e arquivo PDF com todos os trabalhos agrupados;
+- **Etapa 2)** Cadastrar trabalhos:
+  - **Entrada**: Arquivo CSV 
+    - O arquivo CSV deve possuir as colunas id, titulo, autores, area, ignorar;
+  - **Saída**: Trabalhos pré-cadastrados (falta o preenchimento da quantidade de páginas);
+- **Etapa 3)** Processar PDFs referentes aos trabalhos:
+  - **Entrada**: Arquivo ZIP 
+    - Cada arquivo PDF dentro do zip deve ser nomeado com o id do trabalho presente no CSV;
+  - **Saída**: Finalização do cadastro de trabalhos e arquivo PDF com todos os trabalhos agrupados;
 - **Etapa 4)** Gerar sumário:
   - **Saída**: Arquivo PDF referente ao sumário;
-- **Etapa 5)** Gerar o anal:
+- **Etapa 5)** Gerar os anais:
   - **Entrada**: Arquivo PDF referente a capa;
   - **Saída**: Arquivo PDF referente ao anal (Capa + sumário + artigos agrupados);
