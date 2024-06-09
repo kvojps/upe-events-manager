@@ -1,9 +1,8 @@
 from enum import Enum
 from passlib.context import CryptContext
-from api.config.postgres import Base
 from sqlalchemy import Boolean, Column, Integer, String
-
 from api.models.dto.user import UserDTO
+from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
 
 class UserType(Enum):
@@ -11,7 +10,7 @@ class UserType(Enum):
     ADMIN = "ADMIN"
 
 
-class User(Base):
+class User(SqlAlchemyBaseEntity):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)

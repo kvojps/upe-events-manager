@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from api.config.postgres import Base
+from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
 
-class Event(Base):
+class Event(SqlAlchemyBaseEntity):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)

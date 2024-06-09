@@ -1,9 +1,9 @@
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from api.config.postgres import Base
+from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
 
-class Subscriber(Base):
+class Subscriber(SqlAlchemyBaseEntity):
     __tablename__ = "subscribers"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -1,9 +1,9 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from api.config.postgres import Base
+from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
 
-class Paper(Base):
+class Paper(SqlAlchemyBaseEntity):
     __tablename__ = "papers"
 
     id = Column(Integer, primary_key=True, index=True)
