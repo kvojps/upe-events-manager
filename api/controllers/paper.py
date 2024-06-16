@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from api.contracts.responses.paper import BatchPapersResponse, PaperResponse, PapersPaginatedResponse
 from api.services.paper import PaperService
-from api.services.responses.paper import (
+from api.contracts.responses.paper import (
     AreasResponse,
-    BatchPapersResponse,
-    PaperResponse,
-    PapersPaginatedResponse,
 )
 from api.utils.doc_responses import ExceptionResponse
 from core.infrastructure.repositories.orm.event import EventAdapter

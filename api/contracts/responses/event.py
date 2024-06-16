@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
-from core.infrastructure.settings.env_handler import settings
 from api.models.event import Event
+from core.infrastructure.settings.env_handler import settings
 
 
 class EventResponse(BaseModel):

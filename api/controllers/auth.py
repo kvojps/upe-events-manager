@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from api.models.dto.user import AuthDTO
 from api.services.auth import AuthService
-from api.services.responses.user import AuthResponse
+from api.contracts.responses.user import AuthResponse
 from core.infrastructure.repositories.orm.user import UserAdapter
 
 router = APIRouter()

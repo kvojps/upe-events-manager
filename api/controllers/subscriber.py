@@ -1,8 +1,8 @@
 from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.responses import FileResponse
-from api.services.responses.subscriber import (
-    BatchSubscribersResponse,
+from api.contracts.responses.subscriber import BatchSubscribersResponse
+from api.contracts.responses.subscriber import (
     SubscribersPaginatedResponse,
 )
 from api.services.subscriber import SubscriberService

@@ -8,7 +8,7 @@ from PyPDF2 import PdfReader
 from api.models.dto.summary import SummaryDTO
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.paper import PaperRepository
-from api.services.responses.summary import SummaryPdfResponse
+from api.contracts.responses.summary import SummaryPdfResponse
 
 
 class SummaryService:

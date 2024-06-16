@@ -2,10 +2,11 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException
 from jose import jwt
 from passlib.context import CryptContext
+from api.contracts.responses.user import UserResponse
 from core.infrastructure.settings.env_handler import settings
 from api.models.dto.user import AuthDTO
 from core.infrastructure.repositories.user import UserRepository
-from api.services.responses.user import AuthResponse, UserResponse
+from api.contracts.responses.user import AuthResponse
 
 CRYPT_CONTEXT = CryptContext(schemes=["sha256_crypt"])
 
