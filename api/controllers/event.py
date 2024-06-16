@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from api.models.dto.event import EventDTO
 from api.models.dto.summary import SummaryDTO
-from api.services.anal import AnalService
-from api.services.event import EventService
-from api.services.file_handler import FileHandlerService
-from api.services.merged_papers import MergedPapersService
+from core.application.proceedings import ProceedingsService
+from core.application.event import EventService
+from core.application.file_handler import FileHandlerService
+from core.application.merged_papers import MergedPapersService
 from api.contracts.responses.event import EventResponse, EventsPaginatedResponse
-from api.services.summary import SummaryService
+from core.application.summary import SummaryService
 from api.utils.doc_responses import ExceptionResponse
 from core.infrastructure.repositories.orm.event import EventAdapter
 from core.infrastructure.repositories.orm.paper import PaperAdapter
@@ -24,7 +24,7 @@ file_handler_service = FileHandlerService(file_handler_adapter)
 merged_papers_service = MergedPapersService(
     file_handler_service, event_adapter, paper_adapter
 )
-anal_service = AnalService(file_handler_service, event_adapter)
+anal_service = ProceedingsService(file_handler_service, event_adapter)
 
 
 @router.post(
@@ -135,7 +135,7 @@ async def update_merged_papers_filename(
 async def update_anal_filename(
     event_id: int,
     cover: UploadFile = File(...),
-    anal_service: AnalService = Depends(lambda: anal_service),
+    anal_service: ProceedingsService = Depends(lambda: anal_service),
     event_service: EventService = Depends(lambda: service),
 ):
     anal_pdf_response = await anal_service.create_anal_pdf(event_id, cover)

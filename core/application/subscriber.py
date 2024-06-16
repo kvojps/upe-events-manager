@@ -4,21 +4,22 @@ import shutil
 import uuid
 from io import BytesIO
 from math import ceil
-import pdfkit  # type: ignore
+import pdfkit # type: ignore
 from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.exc import SQLAlchemyError
-from validate_docbr import CPF  # type: ignore
-from api.contracts.responses.subscriber import BatchSubscribersErrorResponse, BatchSubscribersResponse
-from core.infrastructure.settings.env_handler import settings
-from api.models.event import Event
-from api.models.subscriber import Subscriber
-from core.infrastructure.shared.cloud.email_handler import EmailHandlerProvider
-from core.infrastructure.repositories.event import EventRepository
-from core.infrastructure.repositories.subscriber import SubscriberRepository
+from validate_docbr import CPF # type: ignore
 from api.contracts.responses.subscriber import (
+    BatchSubscribersErrorResponse,
+    BatchSubscribersResponse,
     SubscribersPaginatedResponse,
 )
+from api.models.event import Event
+from api.models.subscriber import Subscriber
 from api.utils.user_validator import validate_cpf, validate_email
+from core.infrastructure.repositories.event import EventRepository
+from core.infrastructure.repositories.subscriber import SubscriberRepository
+from core.infrastructure.settings.env_handler import settings
+from core.infrastructure.shared.cloud.email_handler import EmailHandlerProvider
 
 
 class SubscriberService:

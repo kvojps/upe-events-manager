@@ -2,13 +2,15 @@ import csv
 from math import ceil
 from typing import Optional
 from fastapi import File, HTTPException, UploadFile, status
-from api.contracts.responses.paper import BatchPapersErrorResponse, BatchPapersResponse, PapersPaginatedResponse
+from api.contracts.responses.paper import (
+    AreasResponse,
+    BatchPapersErrorResponse,
+    BatchPapersResponse,
+    PapersPaginatedResponse,
+)
 from api.models.dto.paper import PaperDTO
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.paper import PaperRepository
-from api.contracts.responses.paper import (
-    AreasResponse,
-)
 
 
 class PaperService:

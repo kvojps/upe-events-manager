@@ -3,7 +3,7 @@ from api.contracts.responses.user import UserResponse
 from api.models.dto.user import UserDTO
 from core.infrastructure.settings.security import is_super_user
 from api.contracts.responses.user import UserPaginatedResponse
-from api.services.user import UserService
+from core.application.user import UserService
 from api.utils.doc_responses import ExceptionResponse
 from core.infrastructure.repositories.orm.user import UserAdapter
 

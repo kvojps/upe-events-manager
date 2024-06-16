@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from api.contracts.responses.paper import BatchPapersResponse, PaperResponse, PapersPaginatedResponse
-from api.services.paper import PaperService
+from core.application.paper import PaperService
 from api.contracts.responses.paper import (
     AreasResponse,
 )

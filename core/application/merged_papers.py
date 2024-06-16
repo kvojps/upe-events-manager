@@ -5,11 +5,11 @@ import time
 import zipfile
 from fastapi import File, HTTPException, UploadFile, status
 from PyPDF2 import PdfReader, PdfWriter
-from core.infrastructure.repositories.event import EventRepository
-from core.infrastructure.repositories.paper import PaperRepository
-from api.services.file_handler import FileHandlerService
 from api.contracts.responses.file_handler import PutObjectResponse
 from api.utils.progress_checker import ProgressChecker
+from core.application.file_handler import FileHandlerService
+from core.infrastructure.repositories.event import EventRepository
+from core.infrastructure.repositories.paper import PaperRepository
 
 
 class MergedPapersService:

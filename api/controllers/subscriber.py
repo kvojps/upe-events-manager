@@ -5,7 +5,7 @@ from api.contracts.responses.subscriber import BatchSubscribersResponse
 from api.contracts.responses.subscriber import (
     SubscribersPaginatedResponse,
 )
-from api.services.subscriber import SubscriberService
+from core.application.subscriber import SubscriberService
 from api.utils.doc_responses import ExceptionResponse
 from core.infrastructure.repositories.orm.event import EventAdapter
 from core.infrastructure.repositories.orm.subscriber import SubscriberAdapter
