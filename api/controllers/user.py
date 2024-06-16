@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from api.models.dto.user import UserDTO
-from api.security import is_super_user
+from core.infrastructure.settings.security import is_super_user
 from api.services.responses.user import UserPaginatedResponse, UserResponse
 from api.services.user import UserService
 from api.utils.doc_responses import ExceptionResponse

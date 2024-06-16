@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from api.security import is_valid_token
+from core.infrastructure.settings.security import is_valid_token
 from .auth import router as auth_router
 from .event import router as event_router
 from .health_check import router as health_check_router
