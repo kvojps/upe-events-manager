@@ -1,7 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from api.config.postgres import Base
-
+from .base import Base
 
 class Paper(Base):
     __tablename__ = "papers"

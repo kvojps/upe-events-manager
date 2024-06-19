@@ -1,6 +1,6 @@
 from enum import Enum
 from passlib.context import CryptContext
-from api.config.postgres import Base
+from .base import Base
 from sqlalchemy import Boolean, Column, Integer, String
 
 from api.models.dto.user import UserDTO

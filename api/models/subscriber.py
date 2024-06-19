@@ -1,7 +1,6 @@
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from api.config.postgres import Base
-
+from .base import Base
 
 class Subscriber(Base):
     __tablename__ = "subscribers"
