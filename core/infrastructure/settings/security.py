@@ -1,9 +1,9 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from passlib.context import CryptContext
-from core.domain.user import UserType
-from api.utils.jwt import verify_token
-from core.domain.user import User
+from core.domain.user import User, UserType
+from core.infrastructure.repositories.orm.user import UserAdapter
 from core.infrastructure.settings.db_connection import get_session
 from core.infrastructure.settings.env_handler import settings
 
@@ -28,6 +28,22 @@ def create_super_user():
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+
+async def verify_token(token: str):
+    try:
+        payload = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    user_data = UserAdapter().get_user_by_username(payload["sub"])
+
+    if user_data is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    return user_data
 
 
 async def is_valid_token(

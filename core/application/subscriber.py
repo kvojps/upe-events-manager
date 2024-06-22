@@ -1,13 +1,14 @@
 import csv
 import os
+import re
 import shutil
 import uuid
 from io import BytesIO
 from math import ceil
-import pdfkit # type: ignore
+import pdfkit  # type: ignore
 from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.exc import SQLAlchemyError
-from validate_docbr import CPF # type: ignore
+from validate_docbr import CPF  # type: ignore
 from api.contracts.responses.subscriber import (
     BatchSubscribersErrorResponse,
     BatchSubscribersResponse,
@@ -15,7 +16,6 @@ from api.contracts.responses.subscriber import (
 )
 from core.domain.event import Event
 from core.domain.subscriber import Subscriber
-from api.utils.user_validator import validate_cpf, validate_email
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.subscriber import SubscriberRepository
 from core.infrastructure.settings.env_handler import settings
@@ -81,8 +81,8 @@ class SubscriberService:
             cpf_row = str(row["cpf"])
             email_row = str(row["email"])
 
-            validate_cpf(cpf_validator, cpf_row)
-            validate_email(email_row)
+            self._validate_cpf(cpf_validator, cpf_row)
+            self._validate_email(email_row)
             self._subscriber_repo.create_subscriber(
                 cpf=cpf_row,
                 email=email_row,
@@ -371,3 +371,13 @@ class SubscriberService:
                     message=f"Exception creating subscriber: {str(e)}",
                 )
             )
+
+    def _validate_cpf(self, cpf_validator: CPF, cpf: str) -> None:
+        if not cpf_validator.validate(cpf):
+            raise ValueError(f"Invalid CPF: {cpf}")
+
+    def _validate_email(self, email: str) -> None:
+        regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
+
+        if not re.fullmatch(regex, email):
+            raise ValueError(f"Invalid Email: {email}")

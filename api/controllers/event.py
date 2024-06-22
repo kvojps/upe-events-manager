@@ -7,7 +7,7 @@ from core.application.file_handler import FileHandlerService
 from core.application.merged_papers import MergedPapersService
 from api.contracts.responses.event import EventResponse, EventsPaginatedResponse
 from core.application.summary import SummaryService
-from api.utils.doc_responses import ExceptionResponse
+from api.contracts.responses.exception import ExceptionResponse
 from core.infrastructure.repositories.orm.event import EventAdapter
 from core.infrastructure.repositories.orm.paper import PaperAdapter
 from core.infrastructure.shared.cloud.aws.file_handler import FileHandlerS3Adapter

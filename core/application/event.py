@@ -1,9 +1,9 @@
+from datetime import datetime
 from math import ceil
 from typing import Optional
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from api.contracts.responses.event import EventResponse, EventsPaginatedResponse
 from core.domain.dto.event import EventDTO
-from api.utils.date import str_to_date
 from core.infrastructure.repositories.event import EventRepository
 
 
@@ -33,9 +33,9 @@ class EventService:
         page_size: int = 10,
     ) -> EventsPaginatedResponse:
         if initial_date:
-            str_to_date(initial_date)
+            self._str_to_date(initial_date)
         if final_date:
-            str_to_date(final_date)
+            self._str_to_date(final_date)
 
         events_amount = self._event_repo.count_events(initial_date, final_date, name)
         return EventsPaginatedResponse.from_events(
@@ -89,3 +89,12 @@ class EventService:
         return EventResponse.from_event(
             self._event_repo.update_anal_filename(event_id, anal_filename)
         )
+
+    def _str_to_date(self, date: str) -> datetime:
+        try:
+            return datetime.strptime(date, "%d-%m-%Y")
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid date format. Date format should be DD-MM-YYYY",
+            )

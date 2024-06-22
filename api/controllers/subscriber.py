@@ -6,7 +6,7 @@ from api.contracts.responses.subscriber import (
     SubscribersPaginatedResponse,
 )
 from core.application.subscriber import SubscriberService
-from api.utils.doc_responses import ExceptionResponse
+from api.contracts.responses.exception import ExceptionResponse
 from core.infrastructure.repositories.orm.event import EventAdapter
 from core.infrastructure.repositories.orm.subscriber import SubscriberAdapter
 from core.infrastructure.shared.cloud.aws.email_handler import EmailHandlerSESAdapter
