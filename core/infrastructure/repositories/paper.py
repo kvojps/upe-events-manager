@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from api.models.dto.paper import PaperDTO
+from core.domain.dto.paper import PaperDTO
 from core.domain.paper import Paper
 
 

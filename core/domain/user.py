@@ -1,7 +1,7 @@
 from enum import Enum
 from passlib.context import CryptContext
 from sqlalchemy import Boolean, Column, Integer, String
-from api.models.dto.user import UserDTO
+from core.domain.dto.user import UserDTO
 from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
 

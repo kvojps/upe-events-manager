@@ -8,7 +8,7 @@ from api.contracts.responses.paper import (
     BatchPapersResponse,
     PapersPaginatedResponse,
 )
-from api.models.dto.paper import PaperDTO
+from core.domain.dto.paper import PaperDTO
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.paper import PaperRepository
 

@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from jose import jwt
 from passlib.context import CryptContext
 from api.contracts.responses.user import AuthResponse, UserResponse
-from api.models.dto.user import AuthDTO
+from core.domain.dto.user import AuthDTO
 from core.infrastructure.repositories.user import UserRepository
 from core.infrastructure.settings.env_handler import settings
 

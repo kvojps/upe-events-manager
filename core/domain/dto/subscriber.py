@@ -1,6 +1,6 @@
 import re
 from pydantic import BaseModel, validator
-from validate_docbr import CPF  # type: ignore
+from validate_docbr import CPF # type: ignore
 
 
 class SubscriberDTO(BaseModel):

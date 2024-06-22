@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from api.models.dto.event import EventDTO
+from core.domain.dto.event import EventDTO
 from core.domain.event import Event
 
 

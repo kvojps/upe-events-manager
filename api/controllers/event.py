@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from api.models.dto.event import EventDTO
-from api.models.dto.summary import SummaryDTO
+from core.domain.dto.event import EventDTO
+from core.domain.dto.summary import SummaryDTO
 from core.application.proceedings import ProceedingsService
 from core.application.event import EventService
 from core.application.file_handler import FileHandlerService

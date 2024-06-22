@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy import or_
-from api.models.dto.paper import PaperDTO
+from core.domain.dto.paper import PaperDTO
 from core.domain.paper import Paper
 from core.infrastructure.repositories.paper import PaperRepository
 from core.infrastructure.settings.db_connection import get_session

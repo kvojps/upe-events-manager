@@ -6,7 +6,7 @@ import pdfkit # type: ignore
 from fastapi import HTTPException, status
 from PyPDF2 import PdfReader
 from api.contracts.responses.summary import SummaryPdfResponse
-from api.models.dto.summary import SummaryDTO
+from core.domain.dto.summary import SummaryDTO
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.paper import PaperRepository
 

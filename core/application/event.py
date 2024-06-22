@@ -2,7 +2,7 @@ from math import ceil
 from typing import Optional
 from fastapi import HTTPException
 from api.contracts.responses.event import EventResponse, EventsPaginatedResponse
-from api.models.dto.event import EventDTO
+from core.domain.dto.event import EventDTO
 from api.utils.date import str_to_date
 from core.infrastructure.repositories.event import EventRepository
 
