@@ -3,7 +3,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from core.infrastructure.settings.ses import SESConfig
-from api.models.subscriber import Subscriber
+from core.domain.subscriber import Subscriber
 from core.infrastructure.settings.env_handler import settings
 from core.infrastructure.shared.cloud.email_handler import EmailHandlerProvider
 

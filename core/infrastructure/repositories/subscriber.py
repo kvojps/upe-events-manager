@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from api.models.subscriber import Subscriber
+from core.domain.subscriber import Subscriber
 
 
 class SubscriberRepository(ABC):

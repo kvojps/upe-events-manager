@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from api.models.event import Event
+from core.domain.event import Event
 from core.infrastructure.settings.env_handler import settings
 
 

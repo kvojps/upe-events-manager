@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
-from api.models.user import User
+from core.domain.user import User
 
 
 class UserResponse(BaseModel):

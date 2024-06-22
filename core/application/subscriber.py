@@ -13,8 +13,8 @@ from api.contracts.responses.subscriber import (
     BatchSubscribersResponse,
     SubscribersPaginatedResponse,
 )
-from api.models.event import Event
-from api.models.subscriber import Subscriber
+from core.domain.event import Event
+from core.domain.subscriber import Subscriber
 from api.utils.user_validator import validate_cpf, validate_email
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.repositories.subscriber import SubscriberRepository

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from api.models.subscriber import Subscriber
+from core.domain.subscriber import Subscriber
 
 
 class EmailHandlerProvider(ABC):

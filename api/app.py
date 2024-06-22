@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.controllers import main_router
-from api.models import create_tables
+from core.domain import create_tables
 from core.infrastructure.settings.security import create_super_user
 
 

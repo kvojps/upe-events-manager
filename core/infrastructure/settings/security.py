@@ -1,8 +1,9 @@
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from api.models.user import User, UserType
+from core.domain.user import UserType
 from api.utils.jwt import verify_token
+from core.domain.user import User
 from core.infrastructure.settings.db_connection import get_session
 from core.infrastructure.settings.env_handler import settings
 

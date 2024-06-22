@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 from api.models.dto.event import EventDTO
-from api.models.event import Event
+from core.domain.event import Event
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.settings.db_connection import get_session
 

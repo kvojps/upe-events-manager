@@ -1,5 +1,5 @@
 from typing import Optional
-from api.models.subscriber import Subscriber
+from core.domain.subscriber import Subscriber
 from core.infrastructure.repositories.subscriber import SubscriberRepository
 from core.infrastructure.settings.db_connection import get_session
 

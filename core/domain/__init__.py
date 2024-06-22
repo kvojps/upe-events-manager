@@ -1,8 +1,8 @@
+from core.domain.event import Event
+from core.domain.subscriber import Subscriber
+from core.domain.user import User
+from core.domain.paper import Paper
 from core.infrastructure.settings.db_connection import engine
-from .event import Event
-from .paper import Paper
-from .subscriber import Subscriber
-from .user import User
 
 
 def create_tables():

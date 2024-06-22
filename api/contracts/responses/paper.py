@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from api.models.paper import Paper
+from core.domain.paper import Paper
 
 
 class PaperResponse(BaseModel):

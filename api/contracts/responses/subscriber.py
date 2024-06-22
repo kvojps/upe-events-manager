@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from api.models.subscriber import Subscriber
+from core.domain.subscriber import Subscriber
 
 
 class SubscriberResponse(BaseModel):

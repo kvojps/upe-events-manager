@@ -1,4 +1,4 @@
-from api.models.user import User
+from core.domain.user import User
 from core.infrastructure.repositories.user import UserRepository
 from core.infrastructure.settings.db_connection import get_session
 

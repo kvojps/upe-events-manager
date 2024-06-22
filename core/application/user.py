@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from api.contracts.responses.user import UserPaginatedResponse, UserResponse
 from api.models.dto.user import UserDTO
-from api.models.user import User
+from core.domain.user import User
 from core.infrastructure.repositories.user import UserRepository
 
 
