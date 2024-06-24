@@ -1,7 +1,7 @@
-"""add initial data
+"""initial structure
 
 Revision ID: 9ad42850aec4
-Revises: 
+Revises: None
 Create Date: 2024-06-19 11:19:24.099952
 
 """
