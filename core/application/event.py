@@ -31,6 +31,8 @@ class EventService:
         name: Optional[str],
         page: int = 1,
         page_size: int = 10,
+        sort_by: str = 'initial_date',  # Default sorting by initial_date
+        sort_direction: str = 'asc',
     ) -> EventsPaginatedResponse:
         if initial_date:
             self._str_to_date(initial_date)
@@ -40,7 +42,7 @@ class EventService:
         events_amount = self._event_repo.count_events(initial_date, final_date, name)
         return EventsPaginatedResponse.from_events(
             events=self._event_repo.get_events(
-                initial_date, final_date, name, page, page_size
+                initial_date, final_date, name, page, page_size, sort_by, sort_direction
             ),
             total_events=events_amount,
             total_pages=ceil(events_amount / page_size),

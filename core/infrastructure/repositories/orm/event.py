@@ -4,6 +4,7 @@ from core.domain.dto.event import EventDTO
 from core.domain.event import Event
 from core.infrastructure.repositories.event import EventRepository
 from core.infrastructure.settings.db_connection import get_session
+from sqlalchemy import asc, desc, func
 
 
 class EventAdapter(EventRepository):
@@ -32,19 +33,38 @@ class EventAdapter(EventRepository):
         name: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
+        sort_by: str = 'initial_date',  # Default sorting by initial_date
+        sort_direction: str = 'asc'  # Default sorting direction ascending
     ) -> list[Event]:
         with get_session() as session:
-            return (
-                session.query(Event)
-                .filter(
-                    Event.initial_date >= initial_date if initial_date else True,
-                    Event.final_date <= final_date if final_date else True,
-                    Event.name.ilike(f"%{name}%") if name else True,
-                )
-                .limit(page_size)
-                .offset((page - 1) * page_size)
-                .all()
-            )
+            query = session.query(Event)
+            
+            if initial_date:
+                query = query.filter(Event.initial_date >= initial_date)
+            if final_date:
+                query = query.filter(Event.final_date <= final_date)
+            if name:
+                query = query.filter(Event.name.ilike(f"%{name}%"))
+            
+            # Apply sorting
+            if sort_by:
+                sort_column = getattr(Event, sort_by, None)
+                if sort_column:
+                    if sort_direction == 'asc':
+                        if sort_by == 'initial_date' or sort_by == 'final_date':
+                            query = query.order_by(func.to_date(sort_column, 'DD-MM-YY').asc())
+                        else:
+                            query = query.order_by(asc(sort_column))
+                    else:
+                        if sort_by == 'initial_date' or sort_by == 'final_date':
+                            query = query.order_by(func.to_date(sort_column, 'DD-MM-YY').desc())
+                        else:
+                            query = query.order_by(desc(sort_column))
+
+            # Apply pagination
+            query = query.limit(page_size).offset((page - 1) * page_size)
+            
+            return query.all()
 
     def get_event_by_id(self, event_id: int) -> Event:
         with get_session() as session:
