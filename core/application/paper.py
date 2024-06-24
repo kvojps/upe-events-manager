@@ -96,10 +96,12 @@ class PaperService:
         event_id: Optional[int],
         page: int = 1,
         page_size: int = 10,
+        sort_by: str = 'title',  # Default sorting by initial_date
+        sort_direction: str = 'asc'
     ) -> PapersPaginatedResponse:
         papers_amount = self._paper_repo.count_papers(search, area, event_id)
         return PapersPaginatedResponse.from_papers(
-            papers=self._paper_repo.get_papers(search, area, event_id, page, page_size),
+            papers=self._paper_repo.get_papers(search, area, event_id, page, page_size, sort_by, sort_direction),
             total_papers=papers_amount,
             total_pages=ceil(papers_amount / page_size),
             current_page=page,
