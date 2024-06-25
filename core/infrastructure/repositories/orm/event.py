@@ -33,8 +33,8 @@ class EventAdapter(EventRepository):
         name: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
-        sort_by: str = 'initial_date',  # Default sorting by initial_date
-        sort_direction: str = 'asc'  # Default sorting direction ascending
+        sort_by: str = 'initial_date',
+        sort_direction: str = 'asc'
     ) -> list[Event]:
         with get_session() as session:
             query = session.query(Event)

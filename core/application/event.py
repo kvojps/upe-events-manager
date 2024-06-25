@@ -31,7 +31,7 @@ class EventService:
         name: Optional[str],
         page: int = 1,
         page_size: int = 10,
-        sort_by: str = 'initial_date',  # Default sorting by initial_date
+        sort_by: str = 'initial_date',
         sort_direction: str = 'asc',
     ) -> EventsPaginatedResponse:
         if initial_date:

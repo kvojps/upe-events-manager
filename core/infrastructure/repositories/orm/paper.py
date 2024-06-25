@@ -32,7 +32,7 @@ class PaperAdapter(PaperRepository):
         event_id: Optional[int] = None,
         page: int = 1,
         page_size: int = 10,
-        sort_by: str = 'title',  # Default sorting by initial_date
+        sort_by: str = 'title',
         sort_direction: str = 'asc' 
     ) -> list[Paper]:
         with get_session() as session:

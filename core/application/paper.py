@@ -96,7 +96,7 @@ class PaperService:
         event_id: Optional[int],
         page: int = 1,
         page_size: int = 10,
-        sort_by: str = 'title',  # Default sorting by initial_date
+        sort_by: str = 'title',
         sort_direction: str = 'asc'
     ) -> PapersPaginatedResponse:
         papers_amount = self._paper_repo.count_papers(search, area, event_id)
