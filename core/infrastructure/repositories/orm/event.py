@@ -38,6 +38,14 @@ class EventAdapter(EventRepository):
     ) -> list[Event]:
         with get_session() as session:
             query = session.query(Event)
+            valid_sort_fields = {"id",
+                "name",
+                "initial_date",
+                "final_date",
+                "promoted_by"
+            }
+            if sort_by not in valid_sort_fields:
+                sort_by = "name"
             
             if initial_date:
                 query = query.filter(Event.initial_date >= initial_date)
