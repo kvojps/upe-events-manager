@@ -14,3 +14,5 @@ passlib
 types-passlib
 pdfkit
 validate-docbr
+alembic
+python-dotenv

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from core.infrastructure.settings.db_connection import SqlAlchemyBaseEntity
 
@@ -8,8 +8,8 @@ class Event(SqlAlchemyBaseEntity):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    initial_date = Column(String)
-    final_date = Column(String)
+    initial_date = Column(DateTime)
+    final_date = Column(DateTime)
     promoted_by = Column(String)
     s3_folder_name = Column(String)
     summary_filename = Column(String)
