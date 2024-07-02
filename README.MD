@@ -10,8 +10,11 @@
   * pip install -r requirements.txt;
 * Instalar o [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html) e definir como variável de ambiente no sistema;
 * Crie um arquivo .env na raíz do projeto, e adicione as variáveis de ambiente de acordo com o .env.example;
+* Crie um banco de dados postgresql e configure-a na variável POSTGRES_DB_URI do arquivo .env 
+  * POSTGRES_DB_URI="postgresql://usuario:senha@ip:porta/nome_base"
 * Na pasta raíz do projeto:
-  * uvicorn api.app:app --reload;
+  * aplique as migraćões: alembic upgrade head 
+  * inicie a aplicaćão: uvicorn api.app:app --reload;
 * Acesse [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) **(Swagger do projeto)**;
 
 # Fluxo de criação dos anais
