@@ -36,6 +36,7 @@ class PaperAdapter(PaperRepository):
         sort_direction: str = 'asc' 
     ) -> list[Paper]:
         with get_session() as session:
+            #Valid Sort By
             valid_sort_fields = {"id",
                 "area",
                 "title",
@@ -44,9 +45,14 @@ class PaperAdapter(PaperRepository):
                 "total_pages",
                 "event_id"
             }
+            #Change invalid fields
             if sort_by not in valid_sort_fields:
                 sort_by = "title"
             
+            if sort_direction not in {"asc", "desc"}:
+                sort_direction = "asc"
+            
+            # Apply sorting
             if sort_direction == "asc":
                 papers = (
                     session.query(Paper)
