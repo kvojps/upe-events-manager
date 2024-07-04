@@ -1,20 +1,22 @@
 from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.responses import FileResponse
-from api.adapters.repository.event import EventAdapter
-from api.adapters.repository.subscriber import SubscriberAdapter
-from api.services.responses.subscriber import (
-    BatchSubscribersResponse,
+from api.contracts.responses.subscriber import BatchSubscribersResponse
+from api.contracts.responses.subscriber import (
     SubscribersPaginatedResponse,
 )
-from api.services.subscriber import SubscriberService
-from api.utils.doc_responses import ExceptionResponse
+from core.application.subscriber import SubscriberService
+from api.contracts.responses.exception import ExceptionResponse
+from core.infrastructure.repositories.orm.event import EventAdapter
+from core.infrastructure.repositories.orm.subscriber import SubscriberAdapter
+from core.infrastructure.shared.cloud.aws.email_handler import EmailHandlerSESAdapter
 
 router = APIRouter()
 
 adapter = SubscriberAdapter()
 event_adapter = EventAdapter()
-service = SubscriberService(adapter, event_adapter)
+ses_adapter = EmailHandlerSESAdapter()
+service = SubscriberService(adapter, event_adapter, ses_adapter)
 
 
 @router.post(
@@ -96,3 +98,18 @@ async def update_subscribers(
     subscriber_service: SubscriberService = Depends(lambda: service),
 ):
     return await subscriber_service.batch_update_subscribers(event_id, file)
+
+
+@router.post(
+    "/{event_id}/send_certificates",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        401: {"model": ExceptionResponse},
+        404: {"model": ExceptionResponse},
+    },
+)
+async def send_certificates(
+    event_id: int,
+    subscriber_service: SubscriberService = Depends(lambda: service),
+):
+    return await subscriber_service.send_all_certificates(event_id)

@@ -1,14 +1,16 @@
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from api.adapters.repository.event import EventAdapter
-from api.adapters.repository.paper import PaperAdapter
-from api.services.paper import PaperService
-from api.services.responses.paper import (
-    AreasResponse,
+from api.contracts.responses.paper import (
     BatchPapersResponse,
     PaperResponse,
     PapersPaginatedResponse,
 )
-from api.utils.doc_responses import ExceptionResponse
+from core.application.paper import PaperService
+from api.contracts.responses.paper import (
+    AreasResponse,
+)
+from api.contracts.responses.exception import ExceptionResponse
+from core.infrastructure.repositories.orm.event import EventAdapter
+from core.infrastructure.repositories.orm.paper import PaperAdapter
 
 router = APIRouter()
 
@@ -43,8 +45,15 @@ def get_papers(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
     paper_service: PaperService = Depends(lambda: service),
+    sort_by: str = Query(default='title'), 
+    sort_direction: str = Query(default='asc')
 ):
-    return paper_service.get_papers(search, area, event_id, page, page_size)
+    return paper_service.get_papers(search, area, event_id, page, page_size, sort_by, sort_direction)
+
+
+@router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
+def get_areas(paper_service: PaperService = Depends(lambda: service)):
+    return paper_service.get_areas()
 
 
 @router.get(
@@ -58,8 +67,3 @@ def get_paper_by_id(
     paper_service: PaperService = Depends(lambda: service),
 ):
     return paper_service.get_paper_by_id(paper_id)
-
-
-@router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
-def get_areas(paper_service: PaperService = Depends(lambda: service)):
-    return paper_service.get_areas()

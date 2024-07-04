@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from api.adapters.repository.user import UserAdapter
-from api.models.dto.user import UserDTO
-from api.security import is_super_user
-from api.services.responses.user import UserPaginatedResponse, UserResponse
-from api.services.user import UserService
-from api.utils.doc_responses import ExceptionResponse
+from api.contracts.responses.user import UserResponse
+from core.domain.dto.user import UserDTO
+from core.infrastructure.settings.security import is_super_user
+from api.contracts.responses.user import UserPaginatedResponse
+from core.application.user import UserService
+from api.contracts.responses.exception import ExceptionResponse
+from core.infrastructure.repositories.orm.user import UserAdapter
 
 router = APIRouter()
 
