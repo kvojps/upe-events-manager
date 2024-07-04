@@ -4,7 +4,7 @@ from core.domain.dto.paper import PaperDTO
 from core.domain.paper import Paper
 from core.infrastructure.repositories.paper import PaperRepository
 from core.infrastructure.settings.db_connection import get_session
-
+from sqlalchemy import asc, desc
 
 class PaperAdapter(PaperRepository):
     def create_paper(self, paper: PaperDTO) -> Paper:
@@ -32,28 +32,69 @@ class PaperAdapter(PaperRepository):
         event_id: Optional[int] = None,
         page: int = 1,
         page_size: int = 10,
+        sort_by: str = 'title',
+        sort_direction: str = 'asc' 
     ) -> list[Paper]:
         with get_session() as session:
-            papers = (
-                session.query(Paper)
-                .filter(
-                    (
-                        or_(
-                            Paper.title.ilike(f"%{search}%"),
-                            Paper.authors.ilike(f"%{search}%"),
-                            Paper.pdf_id == search,
-                        )
-                        if search
-                        else True
-                    ),
-                    Paper.area.ilike(area) if area else True,
-                    Paper.event_id == event_id if event_id else True,
+            #Valid Sort By
+            valid_sort_fields = {"id",
+                "area",
+                "title",
+                "authors",
+                "is_ignored",
+                "total_pages",
+                "event_id"
+            }
+            #Change invalid fields
+            if sort_by not in valid_sort_fields:
+                sort_by = "title"
+            
+            if sort_direction not in {"asc", "desc"}:
+                sort_direction = "asc"
+            
+            # Apply sorting
+            if sort_direction == "asc":
+                papers = (
+                    session.query(Paper)
+                    .filter(
+                        (
+                            or_(
+                                Paper.title.ilike(f"%{search}%"),
+                                Paper.authors.ilike(f"%{search}%"),
+                                Paper.pdf_id == search,
+                            )
+                            if search
+                            else True
+                        ),
+                        Paper.area.ilike(area) if area else True,
+                        Paper.event_id == event_id if event_id else True,
+                    )
+                    .order_by(asc(sort_by))
+                    .limit(page_size)
+                    .offset((page - 1) * page_size)
+                    .all()
                 )
-                .order_by(Paper.title)
-                .limit(page_size)
-                .offset((page - 1) * page_size)
-                .all()
-            )
+            else:
+                papers = (
+                    session.query(Paper)
+                    .filter(
+                        (
+                            or_(
+                                Paper.title.ilike(f"%{search}%"),
+                                Paper.authors.ilike(f"%{search}%"),
+                                Paper.pdf_id == search,
+                            )
+                            if search
+                            else True
+                        ),
+                        Paper.area.ilike(area) if area else True,
+                        Paper.event_id == event_id if event_id else True,
+                    )
+                    .order_by(desc(sort_by))
+                    .limit(page_size)
+                    .offset((page - 1) * page_size)
+                    .all()
+                )
 
             return papers
 

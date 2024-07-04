@@ -16,6 +16,8 @@ class PaperRepository(ABC):
         event_id: Optional[int],
         page: int = 1,
         page_size: int = 10,
+        sort_by: str = 'title',
+        sort_direction: str = 'asc' 
     ) -> list[Paper]: ...
 
     @abstractmethod

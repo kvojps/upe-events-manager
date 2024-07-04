@@ -45,12 +45,14 @@ def create_event(
 def get_events(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
+    sort_by: str = Query(default='initial_date'), 
+    sort_direction: str = Query(default='asc'),
     initial_date: str = Query(None),
     final_date: str = Query(None),
     name: str = Query(None),
     event_service: EventService = Depends(lambda: service),
 ):
-    return event_service.get_events(initial_date, final_date, name, page, page_size)
+    return event_service.get_events(initial_date, final_date, name, page, page_size, sort_by, sort_direction)
 
 
 @router.get(

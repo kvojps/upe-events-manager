@@ -45,8 +45,10 @@ def get_papers(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=100),
     paper_service: PaperService = Depends(lambda: service),
+    sort_by: str = Query(default='title'), 
+    sort_direction: str = Query(default='asc')
 ):
-    return paper_service.get_papers(search, area, event_id, page, page_size)
+    return paper_service.get_papers(search, area, event_id, page, page_size, sort_by, sort_direction)
 
 
 @router.get("/areas", response_model=AreasResponse, status_code=status.HTTP_200_OK)
