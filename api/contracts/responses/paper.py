@@ -1,6 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
+from core.domain.event import Event
 from core.domain.paper import Paper
+from core.infrastructure.settings.db_connection import get_session
+from core.infrastructure.settings.env_handler import settings
 
 
 class PaperResponse(BaseModel):
@@ -12,21 +15,29 @@ class PaperResponse(BaseModel):
     authors: str
     is_ignored: bool
     total_pages: Optional[int]
+    pdf_download_link: str
     event_id: int
 
     @classmethod
     def from_paper(cls, paper: Paper) -> "PaperResponse":
-        return cls(
-            id=int(paper.id),
-            pdf_id=str(paper.pdf_id),
-            area=str(paper.area),
-            pdf_filename=str(paper.pdf_id + ".pdf"),
-            title=str(paper.title),
-            authors=str(paper.authors),
-            is_ignored=bool(paper.is_ignored),
-            total_pages=int(paper.total_pages) if paper.total_pages else None,
-            event_id=int(paper.event_id),
-        )
+        #TODO: REFACTOR THIS TO LAZY LOAD THE EVENT
+        with get_session() as session:
+            s3_folder_name = session.get(Event, paper.event_id).s3_folder_name
+
+            return cls(
+                id=int(paper.id),
+                pdf_id=str(paper.pdf_id),
+                area=str(paper.area),
+                pdf_filename=str(paper.pdf_id + ".pdf"),
+                title=str(paper.title),
+                authors=str(paper.authors),
+                is_ignored=bool(paper.is_ignored),
+                total_pages=int(paper.total_pages) if paper.total_pages else None,
+                pdf_download_link=settings.S3_BASE_URL
+                + f"{str(s3_folder_name)}/"
+                + str(paper.pdf_id + ".pdf"),
+                event_id=int(paper.event_id),
+            )
 
 
 class BatchPapersErrorResponse(BaseModel):
