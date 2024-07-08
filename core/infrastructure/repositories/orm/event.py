@@ -64,15 +64,11 @@ class EventAdapter(EventRepository):
                 sort_column = getattr(Event, sort_by, None)
                 if sort_column:
                     if sort_direction == 'asc':
-                        if sort_by == 'initial_date' or sort_by == 'final_date':
-                            query = query.order_by(func.to_date(sort_column, 'DD-MM-YY').asc())
-                        else:
-                            query = query.order_by(asc(sort_column))
+                        query = query.order_by(asc(sort_column))
                     else:
-                        if sort_by == 'initial_date' or sort_by == 'final_date':
-                            query = query.order_by(func.to_date(sort_column, 'DD-MM-YY').desc())
-                        else:
-                            query = query.order_by(desc(sort_column))
+                        query = query.order_by(desc(sort_column))
+                        
+                            
 
             # Apply pagination
             query = query.limit(page_size).offset((page - 1) * page_size)
