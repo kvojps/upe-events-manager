@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from core.infrastructure.settings.security import is_valid_token
 from .auth import router as auth_router
+from .dashboard import router as dashboard_router
 from .event import router as event_router
 from .health_check import router as health_check_router
 from .paper import router as paper_router
@@ -31,3 +32,5 @@ main_router.include_router(
 main_router.include_router(event_router, prefix="/events", tags=["Events"])
 
 main_router.include_router(paper_router, prefix="/papers", tags=["Papers"])
+
+main_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
