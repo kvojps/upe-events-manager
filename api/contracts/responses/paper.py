@@ -17,12 +17,13 @@ class PaperResponse(BaseModel):
     total_pages: Optional[int]
     pdf_download_link: str
     event_id: int
+    event_name: str
 
     @classmethod
     def from_paper(cls, paper: Paper) -> "PaperResponse":
         #TODO: REFACTOR THIS TO LAZY LOAD THE EVENT
         with get_session() as session:
-            s3_folder_name = session.get(Event, paper.event_id).s3_folder_name
+            event = session.get(Event, paper.event_id)
 
             return cls(
                 id=int(paper.id),
@@ -34,9 +35,10 @@ class PaperResponse(BaseModel):
                 is_ignored=bool(paper.is_ignored),
                 total_pages=int(paper.total_pages) if paper.total_pages else None,
                 pdf_download_link=settings.S3_BASE_URL
-                + f"{str(s3_folder_name)}/"
+                + f"{str(event.s3_folder_name)}/"
                 + str(paper.pdf_id + ".pdf"),
                 event_id=int(paper.event_id),
+                event_name=str(event.name),
             )
 
 
